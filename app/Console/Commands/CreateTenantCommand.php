@@ -17,12 +17,13 @@ class CreateTenantCommand extends Command
     {
         $id = Str::slug($this->argument('id'));
         $subdomain = $this->option('domain') ?? $id;
-        $name = $this->option('name') ?? ucfirst($id) . ' Admin';
+        $name = $this->option('name') ?? ucfirst($id).' Admin';
         $email = $this->option('email') ?? "admin@{$subdomain}.com";
         $password = $this->option('password');
 
         if (Tenant::find($id)) {
             $this->error("Tenant '{$id}' já existe!");
+
             return Command::FAILURE;
         }
 
@@ -31,7 +32,7 @@ class CreateTenantCommand extends Command
         $tenant = Tenant::create(['id' => $id]);
         $tenant->domains()->create(['domain' => $subdomain]);
 
-        $this->info("Inicializando contexto do tenant e criando usuário admin...");
+        $this->info('Inicializando contexto do tenant e criando usuário admin...');
 
         tenancy()->initialize($tenant);
 
@@ -42,11 +43,11 @@ class CreateTenantCommand extends Command
         ]);
 
         $this->newLine();
-        $this->info("✅ Tenant criado com sucesso!");
+        $this->info('✅ Tenant criado com sucesso!');
         $this->table(
             ['ID', 'Subdomínio', 'URL Filament', 'Admin Email', 'Senha Admin'],
             [
-                [$id, $subdomain, "http://{$subdomain}.localhost/admin", $email, $password]
+                [$id, $subdomain, "http://{$subdomain}.localhost/admin", $email, $password],
             ]
         );
 

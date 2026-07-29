@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\TenantUser;
+use App\Models\User;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -71,7 +74,7 @@ class TenancyServiceProvider extends ServiceProvider
             Events\TenancyInitialized::class => [
                 Listeners\BootstrapTenancy::class,
                 function () {
-                    config(['auth.providers.users.model' => \App\Models\TenantUser::class]);
+                    config(['auth.providers.users.model' => TenantUser::class]);
                 },
             ],
 
@@ -79,7 +82,7 @@ class TenancyServiceProvider extends ServiceProvider
             Events\TenancyEnded::class => [
                 Listeners\RevertToCentralContext::class,
                 function () {
-                    config(['auth.providers.users.model' => \App\Models\User::class]);
+                    config(['auth.providers.users.model' => User::class]);
                 },
             ],
 
@@ -136,7 +139,7 @@ class TenancyServiceProvider extends ServiceProvider
 
     protected function makeTenancyMiddlewareHighestPriority()
     {
-        if ($this->app->has(\Illuminate\Contracts\Http\Kernel::class)) {
+        if ($this->app->has(Kernel::class)) {
             $tenancyMiddleware = [
                 // Even higher priority than the initialization middleware
                 Middleware\PreventAccessFromCentralDomains::class,
@@ -149,7 +152,7 @@ class TenancyServiceProvider extends ServiceProvider
             ];
 
             foreach (array_reverse($tenancyMiddleware) as $middleware) {
-                $this->app[\Illuminate\Contracts\Http\Kernel::class]->prependToMiddlewarePriority($middleware);
+                $this->app[Kernel::class]->prependToMiddlewarePriority($middleware);
             }
         }
     }
