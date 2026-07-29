@@ -20,7 +20,13 @@ class TenantResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('data'),
+                Forms\Components\TextInput::make('id')
+                    ->label('ID / Subdomínio')
+                    ->required()
+                    ->disabled(fn (string $operation): bool => $operation !== 'create'),
+                Forms\Components\TextInput::make('tenant_name')
+                    ->label('Nome do Tenant')
+                    ->required(),
             ]);
     }
 
@@ -31,10 +37,15 @@ class TenantResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('tenant_name')
+                    ->label('Nome do Tenant')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('tenancy_db_name')
+                    ->label('Banco de Dados')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()

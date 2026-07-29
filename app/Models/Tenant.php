@@ -7,6 +7,11 @@ use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
 use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 
+/**
+ * @property string $id
+ * @property string|null $tenant_name
+ * @property string|null $tenancy_db_name
+ */
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains;
@@ -19,5 +24,14 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return [
             'id',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Tenant $tenant) {
+            if (empty($tenant->tenant_name)) {
+                $tenant->tenant_name = $tenant->id;
+            }
+        });
     }
 }

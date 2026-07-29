@@ -29,7 +29,10 @@ class CreateTenantCommand extends Command
 
         $this->info("Criando tenant '{$id}' com banco de dados dedicado...");
 
-        $tenant = Tenant::create(['id' => $id]);
+        $tenant = Tenant::create([
+            'id' => $id,
+            'tenant_name' => $subdomain,
+        ]);
         $tenant->domains()->create(['domain' => $subdomain]);
 
         $this->info('Inicializando contexto do tenant e criando usuário admin...');
