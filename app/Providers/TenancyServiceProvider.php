@@ -70,11 +70,17 @@ class TenancyServiceProvider extends ServiceProvider
             Events\InitializingTenancy::class => [],
             Events\TenancyInitialized::class => [
                 Listeners\BootstrapTenancy::class,
+                function () {
+                    config(['auth.providers.users.model' => \App\Models\TenantUser::class]);
+                },
             ],
 
             Events\EndingTenancy::class => [],
             Events\TenancyEnded::class => [
                 Listeners\RevertToCentralContext::class,
+                function () {
+                    config(['auth.providers.users.model' => \App\Models\User::class]);
+                },
             ],
 
             Events\BootstrappingTenancy::class => [],
