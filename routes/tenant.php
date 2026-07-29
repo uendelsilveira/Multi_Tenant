@@ -24,6 +24,6 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
     Route::get('/', function () {
-        return 'Multi-Tenant App (Subdomain). Tenant ID: ' . tenant('id') . ' | DB: ' . config('database.connections.tenant.database');
+        return redirect('/admin');
     });
 });
