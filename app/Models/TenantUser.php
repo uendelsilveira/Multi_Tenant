@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 
 class TenantUser extends Authenticatable
 {
+    /** @use HasFactory<\Illuminate\Database\Eloquent\Factories\Factory<self>> */
     use HasFactory, Notifiable;
 
     protected $table = 'tenant_users';

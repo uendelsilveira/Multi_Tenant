@@ -13,7 +13,7 @@ class CreateTenantCommand extends Command
 
     protected $description = 'Cria um novo tenant com banco de dados próprio e usuário admin';
 
-    public function handle()
+    public function handle(): int
     {
         $id = Str::slug($this->argument('id'));
         $subdomain = $this->option('domain') ?? $id;
