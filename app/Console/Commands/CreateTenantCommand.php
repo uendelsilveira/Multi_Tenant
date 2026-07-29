@@ -43,6 +43,7 @@ class CreateTenantCommand extends Command
             'name' => $name,
             'email' => $email,
             'password' => bcrypt($password),
+            'role' => \App\Enums\UserRole::Admin,
         ]);
 
         $this->newLine();
