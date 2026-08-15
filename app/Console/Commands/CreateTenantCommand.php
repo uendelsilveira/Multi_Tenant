@@ -1,4 +1,5 @@
 <?php
+
 /*
  By Uendel Silveira
  Developer Web
@@ -8,6 +9,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\UserRole;
 use App\Models\Tenant;
 use App\Models\TenantUser;
 use Illuminate\Console\Command;
@@ -49,7 +51,7 @@ class CreateTenantCommand extends Command
             'name' => $name,
             'email' => $email,
             'password' => bcrypt($password),
-            'role' => \App\Enums\UserRole::Admin,
+            'role' => UserRole::Admin,
         ]);
 
         $this->newLine();

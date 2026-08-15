@@ -1,4 +1,5 @@
 <?php
+
 /*
  By Uendel Silveira
  Developer Web
@@ -9,6 +10,7 @@
 namespace App\Models;
 
 use App\Enums\UserRole;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -18,7 +20,7 @@ use Illuminate\Notifications\Notifiable;
  */
 class TenantUser extends Authenticatable
 {
-    /** @use HasFactory<\Illuminate\Database\Eloquent\Factories\Factory<self>> */
+    /** @use HasFactory<Factory<self>> */
     use HasFactory, Notifiable;
 
     protected $table = 'tenant_users';
@@ -43,7 +45,6 @@ class TenantUser extends Authenticatable
             'role' => UserRole::class,
         ];
     }
-
 
     public function isSuperAdmin(): bool
     {
