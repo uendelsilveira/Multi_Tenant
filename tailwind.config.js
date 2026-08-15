@@ -11,10 +11,14 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    darkMode: 'class',
     theme: {
         extend: {
+            colors: {
+                primary: '#1557FF',
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Kodchasan', ...defaultTheme.fontFamily.sans],
             },
         },
     },
