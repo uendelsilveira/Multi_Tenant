@@ -17,6 +17,8 @@ foreach (config('tenancy.central_domains', []) as $domain) {
 }
 
 Route::middleware([
+    'web',
+    'universal',
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
