@@ -5,8 +5,8 @@
  IDE: PhpStorm
  Created: 29/07/2026 20:05
 */
-
-TYPE html>
+?>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">

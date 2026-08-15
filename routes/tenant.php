@@ -30,6 +30,6 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
     Route::get('/', function () {
-        return redirect('/admin');
+        return view('welcome');
     });
 });

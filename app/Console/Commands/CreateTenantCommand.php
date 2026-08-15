@@ -55,7 +55,7 @@ class CreateTenantCommand extends Command
         $this->newLine();
         $this->info('✅ Tenant criado com sucesso!');
         $this->table(
-            ['ID', 'Subdomínio', 'URL Filament', 'Admin Email', 'Senha Admin'],
+            ['ID', 'Subdomínio', 'URL Admin', 'Admin Email', 'Senha Admin'],
             [
                 [$id, $subdomain, "http://{$subdomain}.localhost/admin", $email, $password],
             ]
