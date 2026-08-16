@@ -14,14 +14,19 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Jetstream\HasProfilePhoto;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @property UserRole|null $role
  */
 class TenantUser extends Authenticatable
 {
+    use HasApiTokens;
+
     /** @use HasFactory<Factory<self>> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasProfilePhoto, TwoFactorAuthenticatable;
 
     protected $table = 'tenant_users';
 
@@ -35,6 +40,12 @@ class TenantUser extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
+    ];
+
+    protected $appends = [
+        'profile_photo_url',
     ];
 
     protected function casts(): array
