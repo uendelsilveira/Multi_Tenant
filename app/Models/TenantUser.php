@@ -26,7 +26,7 @@ class TenantUser extends Authenticatable
     use HasApiTokens;
 
     /** @use HasFactory<Factory<self>> */
-    use HasFactory, Notifiable, HasProfilePhoto, TwoFactorAuthenticatable;
+    use HasFactory, HasProfilePhoto, Notifiable, TwoFactorAuthenticatable;
 
     protected $table = 'tenant_users';
 
