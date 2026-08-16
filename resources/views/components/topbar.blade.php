@@ -10,14 +10,9 @@
         </button>
 
         <!-- Logo -->
-        <div class="flex items-center gap-2 select-none group cursor-pointer">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-primary flex items-center justify-center text-white font-extrabold text-lg shadow-[0_0_15px_rgba(21,87,255,0.4)] group-hover:shadow-[0_0_20px_rgba(21,87,255,0.6)] transition-all duration-300">
-                S
-            </div>
-            <span class="text-xl font-bold tracking-tight text-slate-800 dark:text-white transition-colors ml-1">
-                App<span class="text-primary drop-shadow-[0_0_8px_rgba(21,87,255,0.3)]">System</span>
-            </span>
-        </div>
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-2 select-none group cursor-pointer">
+            <x-logo class="h-8 w-auto" />
+        </a>
     </div>
 
     <!-- Direita: Avatar & Dropdown -->
