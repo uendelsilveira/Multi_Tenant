@@ -10,6 +10,7 @@ São dois bancos. O **central** é único. O **banco do tenant** existe um por t
 erDiagram
     PLANS ||--o{ TENANTS : "contratado por"
     PLANS ||--o{ FEATURE_PLAN : contem
+    PLANS ||--|{ PLAN_PRICES : oferece
     FEATURES ||--o{ FEATURE_PLAN : "liberada em"
     TENANTS ||--o{ DOMAINS : possui
     TENANTS ||--o| SUBSCRIPTIONS : tem
@@ -25,6 +26,13 @@ erDiagram
     PLANS {
         id id
         string name
+        string description
+        bool is_active
+    }
+    PLAN_PRICES {
+        id id
+        id plan_id
+        string billing_cycle
         decimal price
     }
     FEATURES {
@@ -39,10 +47,27 @@ erDiagram
     }
     TENANTS {
         string id
-        string name
+        string legal_name
+        string trade_name
+        string person_type
+        string document
+        string state_registration
+        string contact_name
+        string contact_email
+        string contact_phone
+        string zip_code
+        string street
+        string number
+        string complement
+        string district
+        string city
+        string state
+        string notes
         id plan_id
+        string billing_cycle
         string status
         datetime status_locked_until
+        datetime deleted_at
     }
     DOMAINS {
         id id
@@ -83,6 +108,9 @@ erDiagram
 
 Restrições:
 
+- `tenants.id` é o slug (RN20). `tenants.document` é único. `tenants.deleted_at` marca a exclusão lógica (RN24).
+- `plan_prices` tem unicidade em `(plan_id, billing_cycle)`. `billing_cycle` ∈ `monthly | semiannual | annual`, em `plan_prices` e em `tenants`.
+- `tenants.status_locked_until`, `domains.verified_at` e `domains.verified_by` ainda não existem no banco: entram com as fatias de situação e de verificação de domínio.
 - `domains.domain` é único.
 - `domains.panel` ∈ `admin | user | customer`. `domains.status` ∈ `pending | active`.
 - `tenants.status` ∈ `active | suspended`.

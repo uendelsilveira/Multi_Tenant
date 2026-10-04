@@ -7,13 +7,15 @@
 
 | ID | Requisito |
 |---|---|
-| RF01 | O **Usuário Central** cadastra um **Tenant** informando nome, **Plano** e e-mail do **Admin** inicial. |
-| RF02 | O **Usuário Central** cadastra um ou mais **Domínios** para um **Tenant**, indicando a qual **Painel** cada um aponta. |
+| RF01 | O **Usuário Central** cadastra um **Tenant** informando **Slug**, dados cadastrais (razão social, nome fantasia, tipo de pessoa, CNPJ ou CPF, inscrição estadual, responsável, e-mail, telefone, endereço, observações internas), **Plano** e **Ciclo**. O e-mail do **Admin** inicial entra na fatia de provisionamento. |
+| RF02 | No cadastro e na edição do **Tenant**, o **Usuário Central** informa um ou mais **Domínios**, indicando a qual **Painel** cada um aponta. |
 | RF03 | O **Domínio** nasce pendente. O **Usuário Central** o marca como verificado, e o sistema registra quem verificou e quando. A tela oferece um teste que mostra para onde o domínio aponta. |
-| RF04 | O **Usuário Central** cadastra **Planos** e define quais **Funcionalidades** cada plano contém. |
+| RF04 | O **Usuário Central** cadastra **Planos** com nome, descrição, situação (ativo ou inativo), preço para cada **Ciclo** oferecido e as **Funcionalidades** incluídas. O catálogo de funcionalidades é declarado em configuração e sincronizado por comando. |
 | RF05 | O **Usuário Central** altera o **Plano** de um **Tenant**. |
 | RF06 | O **Usuário Central** altera manualmente a situação de um **Tenant**, informando motivo e, opcionalmente, uma data até a qual a cobrança automática não altera essa situação. |
 | RF07 | O sistema mantém histórico de toda mudança de situação do **Tenant**, com origem (gateway ou manual), autor e motivo. |
+| RF21 | O **Usuário Central** exclui um **Tenant** (exclusão lógica) e pode restaurá-lo. Tenants excluídos são consultados por um filtro na listagem. |
+| RF22 | Usuários centrais com papel de consulta listam planos e tenants, mas não cadastram, alteram, excluem nem restauram. |
 
 ## Resolução e acesso
 

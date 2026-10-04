@@ -21,6 +21,13 @@
 | RN17 | Enquanto houver trava manual vigente, eventos de cobrança são registrados mas não alteram a situação do **Tenant**. |
 | RN18 | Cada evento de cobrança produz efeito no máximo uma vez, mesmo se reenviado. |
 | RN19 | Toda mudança manual de situação exige motivo. |
+| RN20 | O **Slug** tem de 3 a 50 caracteres, só letras minúsculas, números e hífen, começa por letra, é único e não muda depois de criado. Ele dá nome ao banco do tenant. |
+| RN21 | Todo **Tenant** tem ao menos um **Domínio**, e ao menos um deles aponta para o **Painel** admin. O domínio é o endereço completo, não pode ser um domínio do central nem repetir o de outro tenant. |
+| RN22 | Um **Plano** oferece de um a três **Ciclos** (mensal, semestral, anual), cada um com seu preço. O **Tenant** contrata o plano em um ciclo que ele ofereça. |
+| RN23 | **Plano** em uso por algum tenant não é excluído, apenas inativado. Plano inativo não é contratado por novos tenants, mas quem já está nele permanece. Um ciclo com tenants contratados não pode ser retirado do plano. |
+| RN24 | A **Exclusão** de um tenant é lógica: o banco dele é mantido, o slug e o documento continuam reservados, seus domínios deixam de responder e ele pode ser restaurado. Não existe exclusão definitiva pela aplicação. |
+| RN25 | O documento do tenant é um CPF ou CNPJ válido (inclusive CNPJ alfanumérico) e único entre os tenants. |
+| RN26 | No central, super admin e admin gerenciam planos e tenants; manager e operator apenas consultam. |
 
 ## Pontos em aberto
 

@@ -2,14 +2,14 @@
 
 Cadeia: `RF → RN → CDU → artefato técnico → teste`.
 
-Na Onda 0 a matriz vai até o artefato técnico **planejado**. As colunas CDU e Teste são preenchidas quando a fatia vertical correspondente for detalhada e construída. Os nomes de artefato são intenção de projeto e podem mudar na fatia.
+Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefato técnico é intenção de projeto e pode mudar quando a fatia for construída.
 
 | RF | RNs | CDU | Artefato técnico planejado | Teste |
 |---|---|---|---|---|
-| RF01 | RN13, RN15 | — | `CreateTenantAction` → `TenantProvisioningService` | — |
-| RF02 | RN01, RN03 | — | `RegisterDomainAction` → `DomainService` | — |
+| RF01 | RN13, RN20, RN22, RN25 | — | `CreateTenantAction` → `TenantService` → `TenantRepository` | `TenantServiceTest`, `CreateTenantActionTest`, `TenantRepositoryTest`, `TenantResourceTest` |
+| RF02 | RN01, RN03, RN21 | — | `CreateTenantAction`, `UpdateTenantAction` → `TenantService` | `TenantServiceTest`, `TenantRepositoryTest`, `TenantResourceTest` |
 | RF03 | RN02 | — | `VerifyDomainAction` → `DomainService` | — |
-| RF04 | RN06 | — | `PlanService`, catálogo de funcionalidades | — |
+| RF04 | RN06, RN22, RN23 | — | `CreatePlanAction`, `UpdatePlanAction`, `DeletePlanAction` → `PlanService`; `SyncFeatureCatalogAction` → `FeatureService` | `PlanServiceTest`, `PlanRepositoryTest`, `PlanResourceTest` |
 | RF05 | RN07 | — | `ChangeTenantPlanAction` → evento `TenantPlanChanged` | — |
 | RF06 | RN17, RN19 | — | `ChangeTenantStatusAction` → `SubscriptionService` | — |
 | RF07 | RN19 | — | `tenant_status_logs` | — |
@@ -26,6 +26,8 @@ Na Onda 0 a matriz vai até o artefato técnico **planejado**. As colunas CDU e 
 | RF18 | RN17, RN18 | — | Endpoints de webhook, `ProcessWebhookEventJob`, `SubscriptionService` | — |
 | RF19 | RN16 | — | Negação central de escrita (`Gate::before`) | — |
 | RF20 | RN05, RN07 | — | Listener de `TenantPlanChanged` limpa cache de funcionalidades | — |
+| RF21 | RN24 | — | `SoftDeleteTenantAction`, `RestoreTenantAction` → `TenantService` | `TenantResourceTest`, `TenantRepositoryTest`, `SoftDeleteKeepsTenantDatabaseTest` |
+| RF22 | RN26 | — | `PlanPolicy`, `TenantPolicy` | `PlanResourceTest`, `TenantResourceTest` |
 
 ## RNs ainda sem RF
 

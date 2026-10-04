@@ -18,6 +18,10 @@ _Avoid_: Super admin, admin (reservado ao tenant)
 Empresa contratante da plataforma, com banco de dados próprio.
 _Avoid_: Cliente, conta, empresa, inquilino
 
+**Slug**:
+Identificador permanente do Tenant, digitado pelo Central no cadastro, que também dá nome ao banco dele.
+_Avoid_: Código, ID, subdomínio
+
 **Domínio**:
 Endereço cadastrado no Central que identifica um Tenant e um Painel.
 _Avoid_: URL, host, subdomínio (subdomínio é só um tipo de Domínio)
@@ -64,6 +68,10 @@ _Avoid_: Perfil personalizado, perfil do tenant
 Pacote de assinatura que define quais Funcionalidades um Tenant pode usar.
 _Avoid_: Pacote, tier, licença
 
+**Ciclo**:
+Periodicidade de cobrança de um Plano: mensal, semestral ou anual, cada uma com seu preço.
+_Avoid_: Periodicidade, recorrência, vigência
+
 **Funcionalidade**:
 Recurso do produto que pode ser liberado por Plano e ligado ou desligado pelo Admin.
 _Avoid_: Feature, módulo, recurso
@@ -80,6 +88,10 @@ _Avoid_: Status de pagamento, bloqueio
 Situação em que o Tenant acessa e consulta, mas não altera nada.
 _Avoid_: Bloqueio, cancelamento, inadimplência
 
+**Exclusão**:
+Retirada lógica de um Tenant: ele some da listagem e deixa de ser acessível, mas seu banco é mantido e ele pode ser restaurado.
+_Avoid_: Remoção, cancelamento, arquivamento
+
 **Trava Manual**:
 Prazo definido pelo Usuário Central durante o qual a cobrança automática não altera a Situação.
 _Avoid_: Override, congelamento
@@ -92,7 +104,9 @@ _Avoid_: Setup, onboarding, instalação
 
 - Um **Tenant** contrata exatamente um **Plano** e tem um ou mais **Domínios**
 - Um **Domínio** aponta para exatamente um **Tenant** e um **Painel**
-- Um **Plano** contém várias **Funcionalidades**
+- Um **Plano** contém várias **Funcionalidades** e oferece de um a três **Ciclos**
+- Um **Tenant** contrata um **Plano** em um dos **Ciclos** que ele oferece
+- Um **Tenant** tem ao menos um **Domínio** apontando para o **Painel** admin
 - Uma **Funcionalidade** está ativa quando está no **Plano** e ligada pelo **Admin**
 - Uma pessoa do **Tenant** tem exatamente um **Perfil**
 - Um **Perfil** pertence a exatamente um **Tipo Base**, e o **Tipo Base** determina o **Painel**
@@ -101,20 +115,25 @@ _Avoid_: Setup, onboarding, instalação
 
 ## Domain → Technical Mapping
 
-Nomes planejados; confirmados fatia a fatia.
+Linhas sem "(planejado)" já estão implementadas. As demais são intenção de projeto, confirmada fatia a fatia.
 
 | Ação de domínio | Action | Service | Evento |
 |---|---|---|---|
-| Cadastrar Tenant | `CreateTenantAction` | `TenantProvisioningService` | `TenantCreated` |
-| Provisionar Tenant | (job) `ProvisionTenantJob` | `TenantProvisioningService` | `TenantProvisioned` |
-| Cadastrar Domínio | `RegisterDomainAction` | `DomainService` | `DomainRegistered` |
-| Verificar Domínio | `VerifyDomainAction` | `DomainService` | `DomainVerified` |
-| Trocar Plano | `ChangeTenantPlanAction` | `PlanService` | `TenantPlanChanged` |
-| Alterar Situação manualmente | `ChangeTenantStatusAction` | `SubscriptionService` | `TenantStatusChanged` |
-| Processar evento de cobrança | (job) `ProcessWebhookEventJob` | `SubscriptionService` | `TenantStatusChanged` |
-| Ligar/desligar Funcionalidade | `ToggleFeatureAction` | `FeatureService` | `FeatureToggled` |
-| Criar Perfil Customizado | `CreateRoleAction` | `RoleService` | — |
-| Cadastrar Cliente | `CreateCustomerAction` | `CustomerService` | `CustomerCreated` |
+| Cadastrar Plano | `CreatePlanAction` | `PlanService` | — |
+| Alterar Plano | `UpdatePlanAction` | `PlanService` | — |
+| Excluir Plano | `DeletePlanAction` | `PlanService` | — |
+| Sincronizar catálogo de Funcionalidades | `SyncFeatureCatalogAction` | `FeatureService` | — |
+| Cadastrar Tenant (com Domínios) | `CreateTenantAction` | `TenantService` | `TenantRegistered` |
+| Alterar Tenant (dados, Plano, Ciclo, Domínios) | `UpdateTenantAction` | `TenantService` | — |
+| Excluir Tenant | `SoftDeleteTenantAction` | `TenantService` | `TenantSoftDeleted` |
+| Restaurar Tenant | `RestoreTenantAction` | `TenantService` | `TenantRestored` |
+| Provisionar Tenant (planejado) | (job) `ProvisionTenantJob` | `TenantProvisioningService` | `TenantProvisioned` |
+| Verificar Domínio (planejado) | `VerifyDomainAction` | `DomainService` | `DomainVerified` |
+| Alterar Situação manualmente (planejado) | `ChangeTenantStatusAction` | `SubscriptionService` | `TenantStatusChanged` |
+| Processar evento de cobrança (planejado) | (job) `ProcessWebhookEventJob` | `SubscriptionService` | `TenantStatusChanged` |
+| Ligar/desligar Funcionalidade (planejado) | `ToggleFeatureAction` | `FeatureService` | `FeatureToggled` |
+| Criar Perfil Customizado (planejado) | `CreateRoleAction` | `RoleService` | — |
+| Cadastrar Cliente (planejado) | `CreateCustomerAction` | `CustomerService` | `CustomerCreated` |
 
 ## Example dialogue
 
