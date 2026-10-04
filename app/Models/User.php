@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  By Uendel Silveira
  Developer Web
@@ -23,7 +25,7 @@ use Illuminate\Notifications\Notifiable;
  */
 #[Fillable(['name', 'email', 'password', 'role'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements FilamentUser
+final class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;

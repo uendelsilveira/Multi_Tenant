@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  By Uendel Silveira
  Developer Web
@@ -10,7 +12,7 @@ namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 
-class ExampleTest extends TestCase
+final class ExampleTest extends TestCase
 {
     /**
      * A basic test example.

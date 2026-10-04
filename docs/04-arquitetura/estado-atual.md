@@ -42,9 +42,9 @@ Este arquivo é um retrato. Quando as divergências forem resolvidas, ele deve s
 | Regra do padrão | Código hoje |
 |---|---|
 | Fluxo em camadas (DTO → Action → Service → Repository) | Não há `Actions`, `DTOs`, `Services` nem `Repositories`. O resource grava direto no model e `CreateTenant::afterCreate` contém regra de provisionamento (marcado no código) |
-| `declare(strict_types=1)` e classes `final` | Aplicado só em `app/Filament/Resources/Tenants/`. Falta no restante de `app/` |
-| `pint.json` com `final_class` e `declare_strict_types` | Arquivo não existe |
-| PHPStan nível 8 | `phpstan.neon` está no nível 7 (sem erros nesse nível) |
+| `declare(strict_types=1)` e classes `final` | Atendido em todo o projeto |
+| `pint.json` com `final_class` e `declare_strict_types` | Atendido |
+| PHPStan nível 8 | Atendido, sem erros |
 | Jobs disparados só por Listeners | Ainda não há eventos nem listeners de domínio |
 | Exceções de domínio | Não há |
 | Cobertura ≥ 80% em Services e Actions | Não há Services nem Actions |
@@ -54,7 +54,7 @@ Este arquivo é um retrato. Quando as divergências forem resolvidas, ele deve s
 
 Segue "Adopting in an existing project" do padrão técnico.
 
-1. **Ferramental:** criar `pint.json`, subir o PHPStan para o nível 8, aplicar o Pint um diretório por vez rodando os testes a cada passo.
+1. **Ferramental:** concluído (`pint.json`, PHPStan nível 8, Pint aplicado em todo o projeto).
 2. **Fatia 1** (`visao-geral.md`): cadastro de plano, tenant e domínio em camadas, substituindo a gravação direta e o `afterCreate`. Remove a exclusão de tenant até existir requisito.
 3. **Fatia 2:** provisionamento assíncrono com admin e senha provisória, substituindo o comando e a senha padrão.
 4. **Fatia 3:** middleware de resolução por registro de domínio, três painéis de tenant e guard próprio.

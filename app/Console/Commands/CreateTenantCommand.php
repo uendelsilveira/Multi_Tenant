@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  By Uendel Silveira
  Developer Web
@@ -8,12 +10,13 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\UserRole;
 use App\Models\Tenant;
 use App\Models\TenantUser;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
-class CreateTenantCommand extends Command
+final class CreateTenantCommand extends Command
 {
     protected $signature = 'tenant:create {id} {--domain=} {--name=} {--email=} {--password=password}';
 
@@ -25,7 +28,7 @@ class CreateTenantCommand extends Command
         $subdomain = $this->option('domain') ?? $id;
         $name = $this->option('name') ?? ucfirst($id).' Admin';
         $email = $this->option('email') ?? "admin@{$subdomain}.com";
-        $password = $this->option('password');
+        $password = (string) $this->option('password');
 
         if (Tenant::find($id)) {
             $this->error("Tenant '{$id}' já existe!");
@@ -49,7 +52,7 @@ class CreateTenantCommand extends Command
             'name' => $name,
             'email' => $email,
             'password' => bcrypt($password),
-            'role' => \App\Enums\UserRole::Admin,
+            'role' => UserRole::Admin,
         ]);
 
         $this->newLine();

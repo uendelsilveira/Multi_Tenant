@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  By Uendel Silveira
  Developer Web
@@ -24,7 +26,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class AdminPanelProvider extends PanelProvider
+final class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {

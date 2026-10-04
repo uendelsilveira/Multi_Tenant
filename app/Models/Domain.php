@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  By Uendel Silveira
  Developer Web
@@ -10,4 +12,4 @@ namespace App\Models;
 
 use Stancl\Tenancy\Database\Models\Domain as BaseDomain;
 
-class Domain extends BaseDomain {}
+final class Domain extends BaseDomain {}

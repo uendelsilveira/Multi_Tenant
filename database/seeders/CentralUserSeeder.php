@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  By Uendel Silveira
  Developer Web
@@ -13,7 +15,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class CentralUserSeeder extends Seeder
+final class CentralUserSeeder extends Seeder
 {
     public function run(): void
     {

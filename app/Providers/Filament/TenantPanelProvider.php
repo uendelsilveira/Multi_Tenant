@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  By Uendel Silveira
  Developer Web
@@ -26,7 +28,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Stancl\Tenancy\Middleware\InitializeTenancyBySubdomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
-class TenantPanelProvider extends PanelProvider
+final class TenantPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
