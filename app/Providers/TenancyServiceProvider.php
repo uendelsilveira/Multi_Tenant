@@ -40,7 +40,9 @@ final class TenancyServiceProvider extends ServiceProvider
                 JobPipeline::make([
                     Jobs\CreateDatabase::class,
                     Jobs\MigrateDatabase::class,
-                    Jobs\SeedDatabase::class,
+                    // Sem Jobs\SeedDatabase: o comando tenants:seed não existe nesta versão do
+                    // Laravel e o seeder criava usuários com senha padrão. O admin inicial
+                    // nasce no provisionamento (fatia 2, RF11).
 
                     // Your own jobs to prepare the tenant.
                     // Provision API keys, create S3 buckets, anything you want!
@@ -54,13 +56,9 @@ final class TenancyServiceProvider extends ServiceProvider
             Events\UpdatingTenant::class => [],
             Events\TenantUpdated::class => [],
             Events\DeletingTenant::class => [],
-            Events\TenantDeleted::class => [
-                JobPipeline::make([
-                    Jobs\DeleteDatabase::class,
-                ])->send(function (Events\TenantDeleted $event) {
-                    return $event->tenant;
-                })->shouldBeQueued(false), // `false` by default, but you probably want to make this `true` for production.
-            ],
+            // A exclusão de tenant é lógica (soft delete): o banco é mantido (RN24).
+            // Não registrar Jobs\DeleteDatabase aqui.
+            Events\TenantDeleted::class => [],
 
             // Domain events
             Events\CreatingDomain::class => [],

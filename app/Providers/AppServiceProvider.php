@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  By Uendel Silveira
  Developer Web
@@ -10,21 +11,31 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Repositories\Contracts\FeatureRepositoryInterface;
+use App\Repositories\Contracts\PlanRepositoryInterface;
+use App\Repositories\Contracts\TenantRepositoryInterface;
+use App\Repositories\Eloquent\FeatureRepository;
+use App\Repositories\Eloquent\PlanRepository;
+use App\Repositories\Eloquent\TenantRepository;
+use App\Services\TenantService;
 use Illuminate\Support\ServiceProvider;
 
 final class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
+    /** @var array<class-string, class-string> */
+    public array $bindings = [
+        FeatureRepositoryInterface::class => FeatureRepository::class,
+        PlanRepositoryInterface::class => PlanRepository::class,
+        TenantRepositoryInterface::class => TenantRepository::class,
+    ];
+
     public function register(): void
     {
-        //
+        $this->app->when(TenantService::class)
+            ->needs('$centralDomains')
+            ->giveConfig('tenancy.central_domains', []);
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         //

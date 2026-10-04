@@ -1,15 +1,28 @@
 <?php
 
 declare(strict_types=1);
-/*
- By Uendel Silveira
- Developer Web
- IDE: PhpStorm
- Created: 29/07/2026 20:05
-*/
 
 namespace App\Models;
 
+use App\Enums\DomainPanel;
+use App\Enums\DomainStatus;
 use Stancl\Tenancy\Database\Models\Domain as BaseDomain;
 
-final class Domain extends BaseDomain {}
+/**
+ * @property int $id
+ * @property string $domain
+ * @property string $tenant_id
+ * @property DomainPanel $panel
+ * @property DomainStatus $status
+ */
+final class Domain extends BaseDomain
+{
+    /** @return array<string, string> */
+    protected function casts(): array
+    {
+        return [
+            'panel' => DomainPanel::class,
+            'status' => DomainStatus::class,
+        ];
+    }
+}
