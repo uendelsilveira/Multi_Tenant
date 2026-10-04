@@ -1,0 +1,164 @@
+# Modelo de dados
+
+> Gate desta fase: toda entidade existe no glossário (`CONTEXT.md`).
+
+São dois bancos. O **central** é único. O **banco do tenant** existe um por tenant, com a mesma estrutura. Não há chave estrangeira entre os dois: o vínculo é feito em tempo de execução pela resolução do domínio.
+
+## Banco central
+
+```mermaid
+erDiagram
+    PLANS ||--o{ TENANTS : "contratado por"
+    PLANS ||--o{ FEATURE_PLAN : contem
+    FEATURES ||--o{ FEATURE_PLAN : "liberada em"
+    TENANTS ||--o{ DOMAINS : possui
+    TENANTS ||--o| SUBSCRIPTIONS : tem
+    TENANTS ||--o{ TENANT_STATUS_LOGS : registra
+    CENTRAL_USERS ||--o{ TENANT_STATUS_LOGS : "autor de"
+
+    CENTRAL_USERS {
+        id id
+        string name
+        string email
+        string password
+    }
+    PLANS {
+        id id
+        string name
+        decimal price
+    }
+    FEATURES {
+        id id
+        string key
+        string name
+        string module
+    }
+    FEATURE_PLAN {
+        id plan_id
+        id feature_id
+    }
+    TENANTS {
+        string id
+        string name
+        id plan_id
+        string status
+        datetime status_locked_until
+    }
+    DOMAINS {
+        id id
+        string tenant_id
+        string domain
+        string panel
+        string status
+        datetime verified_at
+        id verified_by
+    }
+    SUBSCRIPTIONS {
+        id id
+        string tenant_id
+        id plan_id
+        string gateway
+        string gateway_subscription_id
+        string status
+        datetime current_period_end
+    }
+    WEBHOOK_EVENTS {
+        id id
+        string gateway
+        string gateway_event_id
+        string type
+        json payload
+        datetime processed_at
+    }
+    TENANT_STATUS_LOGS {
+        id id
+        string tenant_id
+        string from
+        string to
+        string source
+        id central_user_id
+        string reason
+    }
+```
+
+Restrições:
+
+- `domains.domain` é único.
+- `domains.panel` ∈ `admin | user | customer`. `domains.status` ∈ `pending | active`.
+- `tenants.status` ∈ `active | suspended`.
+- `webhook_events` tem unicidade em `(gateway, gateway_event_id)`.
+- `tenant_status_logs.source` ∈ `gateway | manual`. `central_user_id` e `reason` são obrigatórios quando `manual`.
+
+## Banco do tenant
+
+```mermaid
+erDiagram
+    ROLES ||--o{ USERS : "atribuido a"
+    ROLES ||--o{ ROLE_PERMISSION : concede
+    PERMISSIONS ||--o{ ROLE_PERMISSION : "concedida em"
+    USERS ||--o{ CUSTOMER_USER : "atende (user_id)"
+    USERS ||--o{ CUSTOMER_USER : "e atendido (customer_id)"
+
+    USERS {
+        id id
+        string name
+        string email
+        string password
+        id role_id
+        bool must_change_password
+    }
+    ROLES {
+        id id
+        string name
+        string base_type
+        bool is_system
+    }
+    PERMISSIONS {
+        id id
+        string key
+    }
+    ROLE_PERMISSION {
+        id role_id
+        id permission_id
+    }
+    CUSTOMER_USER {
+        id user_id
+        id customer_id
+    }
+    FEATURE_SETTINGS {
+        string feature_key
+        bool enabled
+    }
+```
+
+Restrições:
+
+- `roles.base_type` ∈ `admin | user | customer`.
+- `customer_user` aponta duas vezes para `users`: `user_id` é uma pessoa de tipo base `user`, `customer_id` é uma pessoa de tipo base `customer`. A validação desses tipos é regra de serviço, não do banco. Ver ADR-0003.
+- `feature_settings.feature_key` referencia `features.key` do central por valor, sem chave estrangeira.
+- `permissions` é semeada a partir do catálogo em código.
+
+## Ciclo de vida do tenant
+
+```mermaid
+stateDiagram-v2
+    [*] --> active : provisionado
+    active --> suspended : pagamento falhou / cancelamento / ação manual
+    suspended --> active : pagamento confirmado / ação manual
+    note right of suspended
+        Somente leitura (RN16).
+        Com trava manual vigente,
+        eventos de cobrança não
+        mudam o estado (RN17).
+    end note
+```
+
+## Ciclo de vida do domínio
+
+```mermaid
+stateDiagram-v2
+    [*] --> pending : cadastrado pelo central
+    pending --> active : verificado manualmente
+    active --> [*] : removido
+    pending --> [*] : removido
+```
