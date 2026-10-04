@@ -17,12 +17,12 @@ Esta é a documentação da **Onda 0**: esqueleto do problema, requisitos macro,
 | Modelagem | [03-modelagem/modelo-de-dados.md](03-modelagem/modelo-de-dados.md) | Modelo alvo; o código ainda não o implementa |
 | Arquitetura | [04-arquitetura/visao-geral.md](04-arquitetura/visao-geral.md) | Arquitetura alvo, com 2 pontos a validar |
 | Arquitetura | [04-arquitetura/estado-atual.md](04-arquitetura/estado-atual.md) | Retrato do código × documentação e padrão técnico |
-| Decisões | [adr/](adr/) | 6 ADRs aceitas |
+| Decisões | [adr/](adr/) | 7 ADRs aceitas |
 | Glossário | [../CONTEXT.md](../CONTEXT.md) | Decidido |
 
 ## Pendências antes de fechar a Onda 0
 
-1. **Decidir se o Filament volta.** A documentação assume Filament; o código o removeu. Ver `estado-atual.md`.
+1. Adequar o código ao padrão técnico e à documentação, na ordem de estado-atual.md.
 2. Confirmar as premissas de `contexto.md` (quem sofre a dor e a métrica de sucesso).
 3. Confirmar ou ajustar a lista de "Fora do escopo".
 4. Ajustar os valores dos RNFs.
