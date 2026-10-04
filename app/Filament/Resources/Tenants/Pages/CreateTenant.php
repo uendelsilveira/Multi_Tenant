@@ -1,25 +1,28 @@
 <?php
-/*
- By Uendel Silveira
- Developer Web
- IDE: PhpStorm
- Created: 29/07/2026 20:05
-*/
 
-namespace App\Filament\Resources\TenantResource\Pages;
+declare(strict_types=1);
 
-use App\Filament\Resources\TenantResource;
+namespace App\Filament\Resources\Tenants\Pages;
+
+use App\Filament\Resources\Tenants\TenantResource;
 use App\Models\Tenant;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateTenant extends CreateRecord
+final class CreateTenant extends CreateRecord
 {
     protected static string $resource = TenantResource::class;
 
+    /**
+     * Desvio conhecido do padrão técnico: a criação do domínio é regra de
+     * provisionamento e deve sair daqui para CreateTenantAction (RF01, RF02).
+     * Comportamento preservado da versão v3 até a fatia 1 ser construída.
+     * Ver docs/04-arquitetura/estado-atual.md.
+     */
     protected function afterCreate(): void
     {
         /** @var Tenant $tenant */
         $tenant = $this->record;
+
         /** @var string $subdomain */
         $subdomain = $tenant->tenant_name ?? $tenant->id;
 
