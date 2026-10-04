@@ -1,13 +1,13 @@
 # Estado atual do código × documentação
 
-Leitura do repositório em 2026-10-04, na branch `filament`, depois da atualização para o Filament v5. Compara o que existe com o que foi decidido em `docs/` e com o padrão técnico (`laravel-tech-standard`, `laravel-filament-specialist`).
+Leitura do repositório em 2026-10-04, na branch `main`, depois da atualização para o Filament v5. Compara o que existe com o que foi decidido em `docs/` e com o padrão técnico (`laravel-tech-standard`, `laravel-filament-specialist`).
 
 Este arquivo é um retrato. Quando as divergências forem resolvidas, ele deve ser removido, não mantido.
 
 ## Branches
 
-- **`filament`** é a base do projeto (ADR-0007).
-- **`main`** seguiu com Jetstream e Livewire depois de remover o Filament. Esse trabalho fica fora da base. A branch não foi apagada nem alterada.
+- **`main`** é a base do projeto, com Filament v5 (ADR-0007). A branch `filament` aponta para o mesmo commit.
+- **`jetstream`** guarda o trabalho feito com Jetstream e Livewire depois da remoção do Filament. Fica fora da base.
 
 ## O que existe
 
