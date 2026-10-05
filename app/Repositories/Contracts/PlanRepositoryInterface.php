@@ -24,6 +24,8 @@ interface PlanRepositoryInterface
 
     public function hasTenants(int $planId): bool;
 
+    public function setStripeProductId(Plan $plan, string $productId): void;
+
     /**
      * Ciclos do plano que têm ao menos um tenant contratado.
      *

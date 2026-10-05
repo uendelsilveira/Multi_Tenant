@@ -10,6 +10,7 @@ use App\DTOs\Tenant\TenantDomainDTO;
 use App\DTOs\Tenant\UpdateTenantDTO;
 use App\Enums\BillingCycle;
 use App\Enums\DomainPanel;
+use App\Enums\PaymentGateway;
 use App\Enums\PersonType;
 
 /**
@@ -52,12 +53,14 @@ final class TenantData
         BillingCycle $cycle = BillingCycle::Monthly,
         ?array $domains = null,
         ?TenantCompanyDTO $company = null,
+        PaymentGateway $gateway = PaymentGateway::Asaas,
     ): CreateTenantDTO {
         return new CreateTenantDTO(
             slug: $slug,
             company: $company ?? self::company(),
             planId: $planId,
             billingCycle: $cycle,
+            gateway: $gateway,
             domains: $domains ?? [new TenantDomainDTO('painel.acme.test', DomainPanel::Admin)],
         );
     }

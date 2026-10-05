@@ -152,6 +152,7 @@ final class TenantResourceTest extends TestCase
             'state' => 'rs',
             'plan_id' => $this->planId,
             'billing_cycle' => 'monthly',
+            'billing_gateway' => 'asaas',
             'domains' => [
                 ['domain' => 'Painel.Acme.test', 'panel' => 'admin'],
                 ['domain' => 'portal.acme.test', 'panel' => 'customer'],

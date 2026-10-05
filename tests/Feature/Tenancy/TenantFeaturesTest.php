@@ -108,6 +108,7 @@ final class TenantFeaturesTest extends TestCase
 
         DB::statement("DROP DATABASE IF EXISTS `{$this->databaseName}`");
         DB::table('domains')->where('tenant_id', $this->tenantId)->delete();
+        DB::table('subscriptions')->where('tenant_id', $this->tenantId)->delete();
         DB::table('tenants')->where('id', $this->tenantId)->delete();
         DB::table('plans')->whereIn('id', [$this->fullPlanId, $this->basicPlanId])->delete();
         DB::table('features')->whereIn('id', $this->featureIds)->delete();

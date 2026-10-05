@@ -68,6 +68,11 @@ final class TenantService
         return $this->tenants->find($tenantId)?->plan_id;
     }
 
+    public function billingCycleOf(string $tenantId): ?BillingCycle
+    {
+        return $this->tenants->find($tenantId)?->billing_cycle;
+    }
+
     /** Exclusão lógica: o banco do tenant é mantido e o slug continua reservado. */
     public function softDelete(string $tenantId): Tenant
     {

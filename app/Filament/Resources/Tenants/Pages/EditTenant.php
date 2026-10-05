@@ -42,6 +42,7 @@ final class EditTenant extends EditRecord
         $tenant = $this->getRecord();
 
         if ($tenant instanceof Tenant) {
+            $data['billing_gateway'] = $tenant->subscription?->gateway->value;
             $data['domains'] = $tenant->domains
                 ->map(fn (Domain $domain): array => [
                     'domain' => $domain->domain,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DTOs\Tenant;
 
 use App\Enums\BillingCycle;
+use App\Enums\PaymentGateway;
 
 final class CreateTenantDTO
 {
@@ -14,6 +15,7 @@ final class CreateTenantDTO
         public readonly TenantCompanyDTO $company,
         public readonly int $planId,
         public readonly BillingCycle $billingCycle,
+        public readonly PaymentGateway $gateway,
         public readonly array $domains,
     ) {}
 
@@ -27,6 +29,9 @@ final class CreateTenantDTO
             billingCycle: $data['billing_cycle'] instanceof BillingCycle
                 ? $data['billing_cycle']
                 : BillingCycle::from((string) $data['billing_cycle']),
+            gateway: ($data['billing_gateway'] ?? null) instanceof PaymentGateway
+                ? $data['billing_gateway']
+                : PaymentGateway::from((string) ($data['billing_gateway'] ?? PaymentGateway::Asaas->value)),
             domains: TenantDomainDTO::listFromArray((array) ($data['domains'] ?? [])),
         );
     }

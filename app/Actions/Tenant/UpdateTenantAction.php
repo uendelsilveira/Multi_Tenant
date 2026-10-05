@@ -20,13 +20,15 @@ final class UpdateTenantAction extends BaseAction
     public function execute(UpdateTenantDTO $dto): Tenant
     {
         $previousPlanId = $this->service->planIdOf($dto->tenantId);
+        $previousCycle = $this->service->billingCycleOf($dto->tenantId);
 
         $tenant = $this->service->update($dto);
 
         Log::info('tenant.updated', ['tenant_id' => $tenant->id]);
 
-        if ($previousPlanId !== $tenant->plan_id) {
+        if ($previousPlanId !== $tenant->plan_id || $previousCycle !== $tenant->billing_cycle) {
             // A troca vale na hora: as funcionalidades do tenant são relidas do plano a cada requisição.
+            // O mesmo evento leva o novo valor às próximas cobranças, também quando só o ciclo muda.
             event(new TenantPlanChanged($tenant->id, $previousPlanId, $tenant->plan_id));
 
             Log::info('tenant.plan_changed', [

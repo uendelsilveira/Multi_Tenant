@@ -6,6 +6,7 @@ namespace App\Filament\Resources\Tenants\Schemas;
 
 use App\Enums\BillingCycle;
 use App\Enums\DomainPanel;
+use App\Enums\PaymentGateway;
 use App\Enums\PersonType;
 use App\Models\Tenant;
 use App\Services\PlanService;
@@ -110,7 +111,7 @@ final class TenantForm
                         ->dehydrateStateUsing(fn (?string $state): string => mb_strtoupper(trim((string) $state))),
                 ]),
             Section::make('Comercial')
-                ->columns(2)
+                ->columns(3)
                 ->schema([
                     Select::make('plan_id')
                         ->label('Plano')
@@ -120,6 +121,13 @@ final class TenantForm
                         ->label('Ciclo de cobrança')
                         ->options(BillingCycle::options())
                         ->required(),
+                    Select::make('billing_gateway')
+                        ->label('Gateway de cobrança')
+                        ->options(PaymentGateway::options())
+                        ->default(PaymentGateway::Asaas->value)
+                        ->required()
+                        ->disabledOn('edit')
+                        ->helperText('A assinatura é criada no gateway logo após o cadastro. Não pode ser trocado depois.'),
                 ]),
             Section::make('Domínios')
                 ->description('Pelo menos um domínio, e ao menos um apontando para o painel Admin. Informe o endereço completo, sem http://.')

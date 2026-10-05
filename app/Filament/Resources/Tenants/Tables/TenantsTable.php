@@ -6,11 +6,13 @@ namespace App\Filament\Resources\Tenants\Tables;
 
 use App\Enums\BillingCycle;
 use App\Enums\ProvisioningStatus;
+use App\Enums\SubscriptionStatus;
 use App\Enums\TenantStatus;
 use App\Filament\Resources\Tenants\Actions\TenantChangeStatusAction;
 use App\Filament\Resources\Tenants\Actions\TenantResendPasswordAction;
 use App\Filament\Resources\Tenants\Actions\TenantRestoreAction;
 use App\Filament\Resources\Tenants\Actions\TenantRetryProvisioningAction;
+use App\Filament\Resources\Tenants\Actions\TenantRetrySubscriptionAction;
 use App\Filament\Resources\Tenants\Actions\TenantSoftDeleteAction;
 use App\Models\Tenant;
 use Filament\Actions\ActionGroup;
@@ -53,6 +55,14 @@ final class TenantsTable
                     ->description(fn (Tenant $record): ?string => $record->status_locked_until?->isFuture()
                         ? 'Travado até '.$record->status_locked_until->format('d/m/Y H:i')
                         : null),
+                TextColumn::make('subscription.status')
+                    ->label('Cobrança')
+                    ->badge()
+                    ->formatStateUsing(fn (?SubscriptionStatus $state): ?string => $state?->label())
+                    ->color(fn (?SubscriptionStatus $state): string => $state?->color() ?? 'gray')
+                    ->description(fn (Tenant $record): ?string => $record->subscription?->gateway->label())
+                    ->tooltip(fn (Tenant $record): ?string => $record->subscription?->last_error)
+                    ->placeholder('—'),
                 TextColumn::make('created_at')
                     ->label('Criado em')
                     ->dateTime('d/m/Y H:i')
@@ -65,6 +75,7 @@ final class TenantsTable
                 EditAction::make(),
                 ActionGroup::make([
                     TenantChangeStatusAction::make(),
+                    TenantRetrySubscriptionAction::make(),
                     TenantRetryProvisioningAction::make(),
                     TenantResendPasswordAction::make(),
                     TenantSoftDeleteAction::make(),

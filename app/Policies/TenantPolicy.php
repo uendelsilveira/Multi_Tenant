@@ -53,6 +53,11 @@ final class TenantPolicy
         return $this->canManage($user);
     }
 
+    public function retrySubscription(User $user, Tenant $tenant): bool
+    {
+        return $this->canManage($user);
+    }
+
     public function changeStatus(User $user, Tenant $tenant): bool
     {
         return $this->canManage($user);

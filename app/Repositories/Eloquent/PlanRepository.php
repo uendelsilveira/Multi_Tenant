@@ -64,6 +64,11 @@ final class PlanRepository implements PlanRepositoryInterface
             ->exists();
     }
 
+    public function setStripeProductId(Plan $plan, string $productId): void
+    {
+        $plan->forceFill(['stripe_product_id' => $productId])->save();
+    }
+
     public function hasTenants(int $planId): bool
     {
         return Tenant::withTrashed()->where('plan_id', $planId)->exists();

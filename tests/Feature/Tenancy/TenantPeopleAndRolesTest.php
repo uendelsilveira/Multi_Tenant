@@ -100,6 +100,7 @@ final class TenantPeopleAndRolesTest extends TestCase
 
         DB::statement("DROP DATABASE IF EXISTS `{$this->databaseName}`");
         DB::table('domains')->where('tenant_id', $this->tenantId)->delete();
+        DB::table('subscriptions')->where('tenant_id', $this->tenantId)->delete();
         DB::table('tenants')->where('id', $this->tenantId)->delete();
 
         if ($this->planId !== null) {

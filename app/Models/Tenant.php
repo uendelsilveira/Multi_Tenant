@@ -11,6 +11,7 @@ use App\Enums\TenantStatus;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
@@ -46,6 +47,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property Carbon|null $deleted_at
  * @property string|null $tenancy_db_name
  * @property-read Plan|null $plan
+ * @property-read Subscription|null $subscription
  * @property-read Collection<int, Domain> $domains
  */
 final class Tenant extends BaseTenant implements TenantWithDatabase
@@ -94,6 +96,12 @@ final class Tenant extends BaseTenant implements TenantWithDatabase
     public function domains(): HasMany
     {
         return $this->hasMany(Domain::class, 'tenant_id');
+    }
+
+    /** @return HasOne<Subscription, $this> */
+    public function subscription(): HasOne
+    {
+        return $this->hasOne(Subscription::class, 'tenant_id');
     }
 
     /** @return HasMany<TenantStatusLog, $this> */

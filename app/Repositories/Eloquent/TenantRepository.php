@@ -9,6 +9,7 @@ use App\DTOs\Tenant\TenantDomainDTO;
 use App\DTOs\Tenant\UpdateTenantDTO;
 use App\Enums\DomainStatus;
 use App\Enums\ProvisioningStatus;
+use App\Enums\SubscriptionStatus;
 use App\Enums\TenantStatus;
 use App\Enums\TenantStatusSource;
 use App\Models\Domain;
@@ -42,6 +43,11 @@ final class TenantRepository implements TenantRepositoryInterface
                     'status' => DomainStatus::Pending->value,
                 ]);
             }
+
+            $tenant->subscription()->create([
+                'gateway' => $dto->gateway->value,
+                'status' => SubscriptionStatus::Pending->value,
+            ]);
 
             return $tenant->load('domains');
         });

@@ -15,6 +15,7 @@ use Stancl\Tenancy\Database\Concerns\CentralConnection;
  * @property string $name
  * @property string|null $description
  * @property bool $is_active
+ * @property string|null $stripe_product_id
  * @property-read Collection<int, PlanPrice> $prices
  * @property-read Collection<int, Feature> $features
  */
