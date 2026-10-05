@@ -5,6 +5,8 @@ parameters:
 
     paths:
         - app/
+        - database/
+        - routes/
 
     level: 8
 
