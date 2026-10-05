@@ -40,6 +40,8 @@
 | RN36 | O tenant nunca fica sem uma pessoa ativa que possa gerenciar pessoas. Toda alteração que levaria a isso é recusada: desativar a pessoa, trocar o perfil dela, tirar a permissão do perfil ou trocar o tipo do perfil. Ninguém desativa a própria conta. |
 | RN37 | Pessoa não é excluída, só desativada, e pode ser reativada. Perfil com pessoas vinculadas não é excluído. |
 | RN38 | Pessoa nova nasce sem senha utilizável. O acesso vem por **Senha Provisória** de 24 horas, enviada ao e-mail dela, com troca obrigatória. O e-mail é único entre as pessoas do tenant. |
+| RN39 | Uma **Funcionalidade** incluída no plano nasce desligada: o admin liga o que a empresa vai usar. Uma funcionalidade fora do plano não aparece para o tenant nem pode ser ligada. |
+| RN40 | Ligar e desligar funcionalidades é uma **Permissão** do tipo admin. O perfil de sistema Admin a tem; um perfil customizado pode não ter. |
 
 ## Pontos em aberto
 

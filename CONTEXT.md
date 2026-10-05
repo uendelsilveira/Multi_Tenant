@@ -115,7 +115,8 @@ _Avoid_: Senha temporária, senha inicial, senha padrão
 - Um **Plano** contém várias **Funcionalidades** e oferece de um a três **Ciclos**
 - Um **Tenant** contrata um **Plano** em um dos **Ciclos** que ele oferece
 - Um **Tenant** tem ao menos um **Domínio** apontando para o **Painel** admin
-- Uma **Funcionalidade** está ativa quando está no **Plano** e ligada pelo **Admin**
+- Uma **Funcionalidade** está ativa quando está no **Plano** e ligada pelo **Admin**; ela nasce desligada
+- Uma **Funcionalidade** fora do **Plano** não existe para o **Tenant**
 - Uma pessoa do **Tenant** tem exatamente um **Perfil**
 - Um **Perfil** pertence a exatamente um **Tipo Base**, e o **Tipo Base** determina o **Painel**
 - O **Tipo Base** de uma pessoa do **Tenant** é o do **Perfil** dela
@@ -148,7 +149,8 @@ Linhas sem "(planejado)" já estão implementadas. As demais são intenção de 
 | Resolver Domínio da requisição | (middleware) `InitializeTenancyForTenantDomain` | `TenantDomainService` | — |
 | Alterar Situação manualmente (planejado) | `ChangeTenantStatusAction` | `SubscriptionService` | `TenantStatusChanged` |
 | Processar evento de cobrança (planejado) | (job) `ProcessWebhookEventJob` | `SubscriptionService` | `TenantStatusChanged` |
-| Ligar/desligar Funcionalidade (planejado) | `ToggleFeatureAction` | `FeatureService` | `FeatureToggled` |
+| Ligar e desligar Funcionalidade | `ToggleFeatureAction` | `TenantFeatureService` | `FeatureToggled` |
+| Trocar o Plano de um Tenant | `UpdateTenantAction` | `TenantService` | `TenantPlanChanged` |
 | Criar, alterar e excluir Perfil Customizado | `CreateRoleAction`, `UpdateRoleAction`, `DeleteRoleAction` | `RoleService` | — |
 | Cadastrar pessoa do Tenant | `CreateTenantUserAction` | `TenantUserService` | `TenantUserAccessRequested` |
 | Alterar pessoa do Tenant | `UpdateTenantUserAction` | `TenantUserService` | — |

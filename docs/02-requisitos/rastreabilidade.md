@@ -10,7 +10,7 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 | RF02 | RN01, RN03, RN21 | — | `CreateTenantAction`, `UpdateTenantAction` → `TenantService` | `TenantServiceTest`, `TenantRepositoryTest`, `TenantResourceTest` |
 | RF03 | RN02, RN31 | — | `DomainResource` → `VerifyTenantDomainAction`, `CheckTenantDomainDnsAction` → `TenantDomainService` | `TenantDomainServiceTest`, `DomainResourceTest`, `TenantDomainRoutingTest` |
 | RF04 | RN06, RN22, RN23 | — | `CreatePlanAction`, `UpdatePlanAction`, `DeletePlanAction` → `PlanService`; `SyncFeatureCatalogAction` → `FeatureService` | `PlanServiceTest`, `PlanRepositoryTest`, `PlanResourceTest` |
-| RF05 | RN07 | — | `ChangeTenantPlanAction` → evento `TenantPlanChanged` | — |
+| RF05 | RN07 | — | `UpdateTenantAction` → `TenantService`; evento `TenantPlanChanged` | `TenantFeaturesTest`, `EditTenantTest` |
 | RF06 | RN17, RN19 | — | `ChangeTenantStatusAction` → `SubscriptionService` | — |
 | RF07 | RN19 | — | `tenant_status_logs` | — |
 | RF08 | RN01, RN02, RN32, RN34 | — | `InitializeTenancyForTenantDomain`, `EnsureDomainMatchesPanel` → `TenantDomainService`; `DomainObserver`, `TenantObserver` | `TenantDomainServiceTest`, `TenantDomainRoutingTest`, `TenantProvisioningFlowTest` |
@@ -19,13 +19,13 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 | RF11 | RN15, RN27, RN29 | — | `TenantRegistered` → `DispatchTenantProvisioning` → `ProvisionTenantJob` → `ProvisionTenantAction` → `TenantProvisioningService` | `TenantProvisioningServiceTest`, `TenantProvisioningActionsTest`, `TenantProvisioningFlowTest` |
 | RF12 | RN12, RN33, RN36, RN37 | — | `PersonResource` → `CreateTenantUserAction`, `UpdateTenantUserAction`, `DeactivateTenantUserAction`, `ActivateTenantUserAction` → `TenantUserService`, `TenantAccessService` | `TenantUserServiceTest`, `TenantAccessServiceTest`, `TenantPeopleAndRolesTest` |
 | RF13 | RN09, RN10, RN11, RN35, RN36, RN37 | — | `RoleResource` → `CreateRoleAction`, `UpdateRoleAction`, `DeleteRoleAction` → `RoleService`, `PermissionCatalog` | `RoleServiceTest`, `TenantAccessServiceTest`, `TenantPeopleAndRolesTest` |
-| RF14 | RN04, RN05 | — | `FeatureService`, `feature_settings` | — |
-| RF15 | RN04 | — | `FeatureService` (menu, rota e jobs) | — |
+| RF14 | RN04, RN05, RN39, RN40 | — | página `ManageFeatures` → `ToggleFeatureAction` → `TenantFeatureService`, `feature_settings` | `TenantFeatureServiceTest`, `TenantFeaturesTest` |
+| RF15 | RN04 | — | `TenantFeatureService`, `EnsureFeatureIsActive`, trait `RequiresFeature`, `SkipWhenFeatureIsInactive` | `TenantFeatureServiceTest`, `TenantFeaturesTest` |
 | RF16 | RN14 | — | `CreateCustomerAction` → `CustomerService` | — |
 | RF17 | RN14 | — | Pivot `customer_user`, escopo de consulta por vínculo | — |
 | RF18 | RN17, RN18 | — | Endpoints de webhook, `ProcessWebhookEventJob`, `SubscriptionService` | — |
 | RF19 | RN16 | — | Negação central de escrita (`Gate::before`) | — |
-| RF20 | RN05, RN07 | — | Listener de `TenantPlanChanged` limpa cache de funcionalidades | — |
+| RF20 | RN05, RN07 | — | `TenantFeatureService` relê o plano a cada requisição, sem cache | `TenantFeatureServiceTest`, `TenantFeaturesTest` |
 | RF21 | RN24 | — | `SoftDeleteTenantAction`, `RestoreTenantAction` → `TenantService` | `TenantResourceTest`, `TenantRepositoryTest`, `SoftDeleteKeepsTenantDatabaseTest` |
 | RF22 | RN26 | — | `PlanPolicy`, `TenantPolicy` | `PlanResourceTest`, `TenantResourceTest` |
 | RF23 | RN29 | — | `RetryTenantProvisioningAction` → `TenantProvisioningService`; `ProvisionTenantJob::failed` → `MarkTenantProvisioningFailedAction` | `TenantProvisioningServiceTest`, `TenantProvisioningActionsTest` |
