@@ -25,3 +25,13 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Laravel Boost: arquivos gerados para os agentes de IA.
+# Sao recriados por "php artisan boost:install" ou "boost:update" a partir do boost.json, que e versionado.
+/.agents/
+/.claude/skills/
+/.github/skills/
+/.junie/
+/.mcp.json
+/AGENTS.md
+/CLAUDE.md
