@@ -122,7 +122,8 @@ _Avoid_: Senha temporária, senha inicial, senha padrão
 - O **Tipo Base** de uma pessoa do **Tenant** é o do **Perfil** dela
 - Um **Perfil de Sistema** tem todas as permissões do seu **Tipo Base**; um **Perfil Customizado**, as que o **Admin** marcar
 - Só **Domínio** verificado responde; cada **Domínio** serve um único **Painel**, no caminho próprio dele
-- Um **Usuário** atende vários **Clientes**, e um **Cliente** é atendido por vários **Usuários**
+- Um **Usuário** atende vários **Clientes**, e um **Cliente** é atendido por um ou mais **Usuários**, seus responsáveis
+- Um **Cliente** é cadastrado por um **Usuário** e nasce vinculado a ele; o **Admin** ajusta os vínculos depois
 - Um **Tenant** tem no máximo uma **Assinatura** vigente
 - O **Provisionamento** de um **Tenant** cria seu **Admin** inicial a partir do responsável e do e-mail de contato, com uma **Senha Provisória**
 
@@ -156,7 +157,10 @@ Linhas sem "(planejado)" já estão implementadas. As demais são intenção de 
 | Alterar pessoa do Tenant | `UpdateTenantUserAction` | `TenantUserService` | — |
 | Desativar e reativar pessoa | `DeactivateTenantUserAction`, `ActivateTenantUserAction` | `TenantUserService` | — |
 | Emitir Senha Provisória de uma pessoa | `RequestTenantUserProvisionalPasswordAction` → (job) `IssueTenantUserProvisionalPasswordJob` | `TenantUserService` | `TenantUserAccessRequested` |
-| Cadastrar Cliente (planejado) | `CreateCustomerAction` | `CustomerService` | `CustomerCreated` |
+| Cadastrar Cliente | `CreateCustomerAction` | `CustomerService` | `TenantUserAccessRequested` |
+| Alterar dados de um Cliente | `UpdateCustomerAction` | `CustomerService` | — |
+| Definir quem atende um Cliente | `SyncCustomerResponsiblesAction` | `CustomerService` | — |
+| Desativar e reativar Cliente | `SetCustomerActiveAction` | `CustomerService` | — |
 
 ## Example dialogue
 

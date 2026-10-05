@@ -21,8 +21,8 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 | RF13 | RN09, RN10, RN11, RN35, RN36, RN37 | — | `RoleResource` → `CreateRoleAction`, `UpdateRoleAction`, `DeleteRoleAction` → `RoleService`, `PermissionCatalog` | `RoleServiceTest`, `TenantAccessServiceTest`, `TenantPeopleAndRolesTest` |
 | RF14 | RN04, RN05, RN39, RN40 | — | página `ManageFeatures` → `ToggleFeatureAction` → `TenantFeatureService`, `feature_settings` | `TenantFeatureServiceTest`, `TenantFeaturesTest` |
 | RF15 | RN04 | — | `TenantFeatureService`, `EnsureFeatureIsActive`, trait `RequiresFeature`, `SkipWhenFeatureIsInactive` | `TenantFeatureServiceTest`, `TenantFeaturesTest` |
-| RF16 | RN14 | — | `CreateCustomerAction` → `CustomerService` | — |
-| RF17 | RN14 | — | Pivot `customer_user`, escopo de consulta por vínculo | — |
+| RF16 | RN14, RN41, RN42 | — | `CustomerResource` (painel do usuário) → `CreateCustomerAction`, `UpdateCustomerAction` → `CustomerService` | `CustomerServiceTest`, `TenantCustomersTest` |
+| RF17 | RN43, RN44 | — | `CustomerPolicy`, `CustomerResource` (painel admin) → `SyncCustomerResponsiblesAction`, `SetCustomerActiveAction` → `CustomerService`; pivot `customer_user` | `CustomerServiceTest`, `TenantCustomersTest` |
 | RF18 | RN17, RN18 | — | Endpoints de webhook, `ProcessWebhookEventJob`, `SubscriptionService` | — |
 | RF19 | RN16 | — | Negação central de escrita (`Gate::before`) | — |
 | RF20 | RN05, RN07 | — | `TenantFeatureService` relê o plano a cada requisição, sem cache | `TenantFeatureServiceTest`, `TenantFeaturesTest` |

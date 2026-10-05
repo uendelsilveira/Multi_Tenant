@@ -128,6 +128,7 @@ erDiagram
     ROLES ||--o{ USERS : "atribuido a"
     USERS ||--o{ CUSTOMER_USER : "atende (user_id)"
     USERS ||--o{ CUSTOMER_USER : "e atendido (customer_id)"
+    USERS ||--o| CUSTOMER_PROFILES : "dados de cliente"
 
     USERS {
         id id
@@ -150,6 +151,12 @@ erDiagram
         id user_id
         id customer_id
     }
+    CUSTOMER_PROFILES {
+        id user_id
+        string phone
+        string document
+        string notes
+    }
     FEATURE_SETTINGS {
         string feature_key
         bool enabled
@@ -164,7 +171,8 @@ Restrições:
 - As permissões não têm tabela: o catálogo fica em `config/permissions.php` e `roles.permissions` guarda as chaves marcadas em um perfil customizado (ADR-0009). Perfil de sistema não usa a coluna.
 - Os três perfis de sistema são criados pela própria migration, em todo tenant.
 - `users.must_change_password` e `users.password_expires_at` controlam a senha provisória; `users.is_active` a desativação.
-- `customer_user` ainda não existe: entra com a fatia de clientes.
+- `customer_profiles` guarda o que só cliente tem, em relação 1:1 com a pessoa, para não inflar `users` (ADR-0003).
+- No código, a mesma linha de `users` é lida por dois models: `TenantUser`, que autentica, e `Customer`, que é a visão de cadastro, restrita a perfis de tipo cliente.
 
 ## Ciclo de vida do tenant
 

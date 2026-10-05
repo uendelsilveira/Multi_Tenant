@@ -43,8 +43,8 @@
 | RF26 | A pessoa recém-cadastrada recebe por e-mail uma **Senha Provisória** e o endereço do painel do seu tipo. Quem gerencia pessoas pode mandar reenviar enquanto ela não fez o primeiro acesso. |
 | RF14 | Quem tem a **Permissão** de gerenciar funcionalidades liga e desliga, em uma tela própria do painel admin, as **Funcionalidades** contidas no **Plano** do tenant. As que o plano não contém não aparecem. |
 | RF15 | Uma **Funcionalidade** inativa não aparece no menu, tem suas telas e rotas bloqueadas e não executa processamento em segundo plano, inclusive o que já estava na fila. A plataforma oferece aos módulos os meios para isso. |
-| RF16 | O **Usuário** cadastra um **Cliente**, que fica vinculado a ele. |
-| RF17 | Um **Cliente** pode estar vinculado a vários **Usuários** e um **Usuário** a vários **Clientes**. O **Usuário** vê apenas os clientes vinculados a ele; o **Admin** vê todos. |
+| RF16 | O **Usuário** cadastra um **Cliente**, com nome, e-mail, telefone, CPF ou CNPJ (opcional) e observações. O cliente fica vinculado a ele e recebe por e-mail o acesso ao portal. O usuário edita os dados dos seus clientes. |
+| RF17 | Um **Cliente** pode ser atendido por vários **Usuários** e um **Usuário** atender vários **Clientes**. O **Usuário** vê apenas os clientes vinculados a ele. Quem gerencia todos os clientes vê todos, define quem atende cada um e desativa ou reativa clientes. |
 
 ## Assinatura e cobrança
 
