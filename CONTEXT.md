@@ -114,6 +114,8 @@ _Avoid_: Senha temporária, senha inicial, senha padrão
 - Uma **Funcionalidade** está ativa quando está no **Plano** e ligada pelo **Admin**
 - Uma pessoa do **Tenant** tem exatamente um **Perfil**
 - Um **Perfil** pertence a exatamente um **Tipo Base**, e o **Tipo Base** determina o **Painel**
+- Enquanto os **Perfis** não existem, cada pessoa do **Tenant** carrega diretamente o seu **Tipo Base**
+- Só **Domínio** verificado responde; cada **Domínio** serve um único **Painel**, no caminho próprio dele
 - Um **Usuário** atende vários **Clientes**, e um **Cliente** é atendido por vários **Usuários**
 - Um **Tenant** tem no máximo uma **Assinatura** vigente
 - O **Provisionamento** de um **Tenant** cria seu **Admin** inicial a partir do responsável e do e-mail de contato, com uma **Senha Provisória**
@@ -136,7 +138,9 @@ Linhas sem "(planejado)" já estão implementadas. As demais são intenção de 
 | Provisionar novamente | `RetryTenantProvisioningAction` | `TenantProvisioningService` | `TenantProvisioningRetryRequested` |
 | Reenviar Senha Provisória | `RequestProvisionalPasswordResendAction` → (job) `ResendProvisionalPasswordJob` | `TenantProvisioningService` | `ProvisionalPasswordResendRequested` |
 | Trocar Senha Provisória | `ChangeProvisionalPasswordAction` | `TenantUserService` | — |
-| Verificar Domínio (planejado) | `VerifyDomainAction` | `DomainService` | `DomainVerified` |
+| Verificar Domínio | `VerifyTenantDomainAction` | `TenantDomainService` | `TenantDomainVerified` |
+| Testar DNS de um Domínio | `CheckTenantDomainDnsAction` | `TenantDomainService` | — |
+| Resolver Domínio da requisição | (middleware) `InitializeTenancyForTenantDomain` | `TenantDomainService` | — |
 | Alterar Situação manualmente (planejado) | `ChangeTenantStatusAction` | `SubscriptionService` | `TenantStatusChanged` |
 | Processar evento de cobrança (planejado) | (job) `ProcessWebhookEventJob` | `SubscriptionService` | `TenantStatusChanged` |
 | Ligar/desligar Funcionalidade (planejado) | `ToggleFeatureAction` | `FeatureService` | `FeatureToggled` |

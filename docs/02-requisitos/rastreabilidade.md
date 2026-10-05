@@ -8,13 +8,13 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 |---|---|---|---|---|
 | RF01 | RN13, RN20, RN22, RN25 | — | `CreateTenantAction` → `TenantService` → `TenantRepository` | `TenantServiceTest`, `CreateTenantActionTest`, `TenantRepositoryTest`, `TenantResourceTest` |
 | RF02 | RN01, RN03, RN21 | — | `CreateTenantAction`, `UpdateTenantAction` → `TenantService` | `TenantServiceTest`, `TenantRepositoryTest`, `TenantResourceTest` |
-| RF03 | RN02 | — | `VerifyDomainAction` → `DomainService` | — |
+| RF03 | RN02, RN31 | — | `DomainResource` → `VerifyTenantDomainAction`, `CheckTenantDomainDnsAction` → `TenantDomainService` | `TenantDomainServiceTest`, `DomainResourceTest`, `TenantDomainRoutingTest` |
 | RF04 | RN06, RN22, RN23 | — | `CreatePlanAction`, `UpdatePlanAction`, `DeletePlanAction` → `PlanService`; `SyncFeatureCatalogAction` → `FeatureService` | `PlanServiceTest`, `PlanRepositoryTest`, `PlanResourceTest` |
 | RF05 | RN07 | — | `ChangeTenantPlanAction` → evento `TenantPlanChanged` | — |
 | RF06 | RN17, RN19 | — | `ChangeTenantStatusAction` → `SubscriptionService` | — |
 | RF07 | RN19 | — | `tenant_status_logs` | — |
-| RF08 | RN01, RN02 | — | Middleware de resolução de domínio | — |
-| RF09 | RN08, RN10 | — | `canAccessPanel` por tipo base | — |
+| RF08 | RN01, RN02, RN32, RN34 | — | `InitializeTenancyForTenantDomain`, `EnsureDomainMatchesPanel` → `TenantDomainService`; `DomainObserver`, `TenantObserver` | `TenantDomainServiceTest`, `TenantDomainRoutingTest`, `TenantProvisioningFlowTest` |
+| RF09 | RN08, RN33 | — | `TenantUser::canAccessPanel`, `User::canAccessPanel`, guard `tenant` | `UnknownRoleTest`, `TenantProvisioningFlowTest` |
 | RF10 | RN15, RN28 | — | `EnforceProvisionalPasswordChange`, página `ChangeProvisionalPassword` → `ChangeProvisionalPasswordAction` → `TenantUserService` | `TenantUserServiceTest`, `TenantProvisioningFlowTest` |
 | RF11 | RN15, RN27, RN29 | — | `TenantRegistered` → `DispatchTenantProvisioning` → `ProvisionTenantJob` → `ProvisionTenantAction` → `TenantProvisioningService` | `TenantProvisioningServiceTest`, `TenantProvisioningActionsTest`, `TenantProvisioningFlowTest` |
 | RF12 | RN12 | — | `UserService` | — |

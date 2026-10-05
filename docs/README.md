@@ -17,7 +17,7 @@ Esta é a documentação da **Onda 0**: esqueleto do problema, requisitos macro,
 | Modelagem | [03-modelagem/modelo-de-dados.md](03-modelagem/modelo-de-dados.md) | Modelo alvo; o código ainda não o implementa |
 | Arquitetura | [04-arquitetura/visao-geral.md](04-arquitetura/visao-geral.md) | Arquitetura alvo, com 2 pontos a validar |
 | Arquitetura | [04-arquitetura/estado-atual.md](04-arquitetura/estado-atual.md) | Retrato do código × documentação e padrão técnico |
-| Decisões | [adr/](adr/) | 7 ADRs aceitas |
+| Decisões | [adr/](adr/) | 8 ADRs aceitas |
 | Glossário | [../CONTEXT.md](../CONTEXT.md) | Decidido |
 
 ## Pendências antes de fechar a Onda 0
@@ -27,7 +27,7 @@ Esta é a documentação da **Onda 0**: esqueleto do problema, requisitos macro,
 3. Confirmar ou ajustar a lista de "Fora do escopo".
 4. Ajustar os valores dos RNFs.
 5. Decidir os pontos em aberto listados no fim de `regras-de-negocio.md`.
-6. Validar os dois pontos técnicos de `visao-geral.md` (painéis por domínio dinâmico e certificado automático).
+6. Validar o ponto técnico que resta em `visao-geral.md`: certificado automático para domínios próprios.
 7. O `README.md` da raiz descreve o projeto antes destas decisões e precisa ser revisto. Runbook e changelog ainda não existem.
 
 ## Convenções

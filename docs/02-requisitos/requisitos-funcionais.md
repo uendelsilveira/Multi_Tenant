@@ -9,7 +9,7 @@
 |---|---|
 | RF01 | O **Usuário Central** cadastra um **Tenant** informando **Slug**, dados cadastrais (razão social, nome fantasia, tipo de pessoa, CNPJ ou CPF, inscrição estadual, responsável, e-mail, telefone, endereço, observações internas), **Plano** e **Ciclo**. O e-mail do **Admin** inicial entra na fatia de provisionamento. |
 | RF02 | No cadastro e na edição do **Tenant**, o **Usuário Central** informa um ou mais **Domínios**, indicando a qual **Painel** cada um aponta. |
-| RF03 | O **Domínio** nasce pendente. O **Usuário Central** o marca como verificado, e o sistema registra quem verificou e quando. A tela oferece um teste que mostra para onde o domínio aponta. |
+| RF03 | Todo **Domínio** nasce pendente. O **Usuário Central** consulta os domínios em uma listagem própria, pode testar para onde cada um aponta e o marca como verificado; o sistema registra quem verificou e quando. |
 | RF04 | O **Usuário Central** cadastra **Planos** com nome, descrição, situação (ativo ou inativo), preço para cada **Ciclo** oferecido e as **Funcionalidades** incluídas. O catálogo de funcionalidades é declarado em configuração e sincronizado por comando. |
 | RF05 | O **Usuário Central** altera o **Plano** de um **Tenant**. |
 | RF06 | O **Usuário Central** altera manualmente a situação de um **Tenant**, informando motivo e, opcionalmente, uma data até a qual a cobrança automática não altera essa situação. |
@@ -21,8 +21,8 @@
 
 | ID | Requisito |
 |---|---|
-| RF08 | A cada requisição, o sistema identifica o **Tenant** e o **Painel** a partir do domínio. Domínio desconhecido ou pendente recebe "não encontrado". |
-| RF09 | O acesso a um **Painel** só é permitido a quem tem **Perfil** do **Tipo Base** correspondente àquele painel. |
+| RF08 | A cada requisição, o sistema identifica o **Tenant** e o **Painel** a partir do domínio. Domínio desconhecido, pendente ou de tenant excluído recebe "não encontrado", assim como o caminho de um painel acessado pelo domínio de outro. |
+| RF09 | O acesso a um **Painel** só é permitido a quem tem o **Tipo Base** correspondente àquele painel. Usuário central só acessa o painel central. |
 | RF10 | No primeiro acesso com **Senha Provisória**, o sistema leva o usuário para a troca da senha e não abre nenhuma outra tela antes disso. Com a senha provisória vencida, a sessão é encerrada. |
 
 ## Provisionamento

@@ -32,6 +32,10 @@
 | RN28 | A **Senha Provisória** vale 24 horas. O central pode mandar reenviar apenas enquanto o admin não fez o primeiro acesso; a nova senha invalida a anterior. Depois do primeiro acesso, o central não altera mais a conta. |
 | RN29 | O **Provisionamento** pode ser repetido sem efeito colateral: cada etapa confere se já foi feita, não cria um segundo admin nem envia outra senha. Qualquer tenant que não esteja pronto pode ser provisionado novamente. |
 | RN30 | Enquanto o ambiente do **Tenant** não está pronto, seus domínios respondem com uma página de espera, e não com erro. |
+| RN31 | Todo **Domínio** passa pela verificação manual, inclusive subdomínio da própria plataforma. Trocar o endereço de um domínio cria um domínio novo, pendente. Trocar só o painel mantém a verificação. |
+| RN32 | Cada **Painel** de tenant tem um caminho fixo dentro do domínio que aponta para ele: admin em `/admin`, usuário em `/app`, cliente em `/portal`. A raiz do domínio leva a esse caminho. |
+| RN33 | Enquanto os **Perfis** não existem, cada pessoa do tenant tem diretamente um **Tipo Base** (admin, usuário ou cliente). Pessoa sem tipo reconhecido não entra em painel nenhum. |
+| RN34 | Excluir um tenant, remover um domínio ou trocar seu endereço fecha o acesso na hora, sem esperar a expiração de cache. |
 
 ## Pontos em aberto
 

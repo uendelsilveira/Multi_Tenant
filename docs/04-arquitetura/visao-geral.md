@@ -116,7 +116,7 @@ Mapa de eventos (conferir nomes na documentação vigente de cada gateway antes 
 
 ## Pontos a validar antes de construir
 
-1. **Painéis Filament com domínio dinâmico.** Os domínios vêm do banco, então não dá para fixar um domínio por painel na configuração. Abordagem proposta: os três painéis têm caminhos internos distintos (`/admin`, `/app`, `/portal`); a raiz do domínio redireciona para o caminho do painel dele; o middleware devolve 404 para os caminhos dos outros painéis naquele host. Precisa de prova de conceito na versão do Filament em uso.
+1. **Painéis Filament com domínio dinâmico: validado.** Os três painéis têm caminhos distintos (`/admin`, `/app`, `/portal`), a raiz do domínio redireciona para o caminho do painel dele e o middleware devolve 404 para o caminho de outro painel naquele domínio. A rota de atualização do Livewire também resolve o tenant, antes da sessão. Decisão registrada na ADR-0008 e conferida com login real no navegador.
 2. **Certificado para domínios próprios.** Com domínios de clientes cadastrados a qualquer momento, o servidor precisa emitir certificado sob demanda, consultando um endpoint que confirma se o host existe em `domains` com `status = active`. A escolha do servidor que faz isso ainda não foi feita.
 
 ## Ordem de construção (fatias verticais)
