@@ -15,8 +15,8 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 | RF07 | RN19 | — | `tenant_status_logs` | — |
 | RF08 | RN01, RN02 | — | Middleware de resolução de domínio | — |
 | RF09 | RN08, RN10 | — | `canAccessPanel` por tipo base | — |
-| RF10 | RN15 | — | Middleware de troca obrigatória de senha | — |
-| RF11 | RN09, RN15 | — | `ProvisionTenantJob` | — |
+| RF10 | RN15, RN28 | — | `EnforceProvisionalPasswordChange`, página `ChangeProvisionalPassword` → `ChangeProvisionalPasswordAction` → `TenantUserService` | `TenantUserServiceTest`, `TenantProvisioningFlowTest` |
+| RF11 | RN15, RN27, RN29 | — | `TenantRegistered` → `DispatchTenantProvisioning` → `ProvisionTenantJob` → `ProvisionTenantAction` → `TenantProvisioningService` | `TenantProvisioningServiceTest`, `TenantProvisioningActionsTest`, `TenantProvisioningFlowTest` |
 | RF12 | RN12 | — | `UserService` | — |
 | RF13 | RN09, RN10, RN11 | — | `RoleService` | — |
 | RF14 | RN04, RN05 | — | `FeatureService`, `feature_settings` | — |
@@ -28,6 +28,9 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 | RF20 | RN05, RN07 | — | Listener de `TenantPlanChanged` limpa cache de funcionalidades | — |
 | RF21 | RN24 | — | `SoftDeleteTenantAction`, `RestoreTenantAction` → `TenantService` | `TenantResourceTest`, `TenantRepositoryTest`, `SoftDeleteKeepsTenantDatabaseTest` |
 | RF22 | RN26 | — | `PlanPolicy`, `TenantPolicy` | `PlanResourceTest`, `TenantResourceTest` |
+| RF23 | RN29 | — | `RetryTenantProvisioningAction` → `TenantProvisioningService`; `ProvisionTenantJob::failed` → `MarkTenantProvisioningFailedAction` | `TenantProvisioningServiceTest`, `TenantProvisioningActionsTest` |
+| RF24 | RN28 | — | `RequestProvisionalPasswordResendAction` → `ResendProvisionalPasswordJob` → `ResendProvisionalPasswordAction` | `TenantProvisioningServiceTest`, `TenantProvisioningFlowTest` |
+| RF25 | RN30 | — | `EnsureTenantIsProvisioned` | `UnprovisionedTenantTest` |
 
 ## RNs ainda sem RF
 

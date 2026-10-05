@@ -23,13 +23,16 @@
 |---|---|
 | RF08 | A cada requisição, o sistema identifica o **Tenant** e o **Painel** a partir do domínio. Domínio desconhecido ou pendente recebe "não encontrado". |
 | RF09 | O acesso a um **Painel** só é permitido a quem tem **Perfil** do **Tipo Base** correspondente àquele painel. |
-| RF10 | No primeiro acesso com senha provisória, o sistema exige a troca da senha antes de liberar qualquer tela. |
+| RF10 | No primeiro acesso com **Senha Provisória**, o sistema leva o usuário para a troca da senha e não abre nenhuma outra tela antes disso. Com a senha provisória vencida, a sessão é encerrada. |
 
 ## Provisionamento
 
 | ID | Requisito |
 |---|---|
-| RF11 | Ao cadastrar um **Tenant**, o sistema cria seu banco isolado, a estrutura de dados, os três **Perfis de Sistema** e o **Admin** inicial com senha provisória enviada por e-mail. |
+| RF11 | Ao cadastrar um **Tenant**, o sistema enfileira o **Provisionamento**: cria o banco isolado, a estrutura de dados e o **Admin** inicial, a partir do responsável e do e-mail de contato, com **Senha Provisória** enviada por e-mail. Os **Perfis de Sistema** entram na fatia de perfis. |
+| RF23 | O **Usuário Central** vê, na listagem, a situação do ambiente de cada **Tenant** (aguardando, provisionando, pronto, falhou) e o motivo da falha, e pode mandar provisionar novamente o que não está pronto. |
+| RF24 | O **Usuário Central** manda reenviar a **Senha Provisória** do **Admin** inicial. |
+| RF25 | Quem acessa o domínio de um **Tenant** cujo ambiente ainda não está pronto vê uma página de espera, que se atualiza sozinha. |
 
 ## Dentro do tenant
 

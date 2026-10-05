@@ -66,6 +66,9 @@ erDiagram
         id plan_id
         string billing_cycle
         string status
+        string provisioning_status
+        string provisioning_error
+        datetime provisioned_at
         datetime status_locked_until
         datetime deleted_at
     }
@@ -111,6 +114,7 @@ Restrições:
 - `tenants.id` é o slug (RN20). `tenants.document` é único. `tenants.deleted_at` marca a exclusão lógica (RN24).
 - `plan_prices` tem unicidade em `(plan_id, billing_cycle)`. `billing_cycle` ∈ `monthly | semiannual | annual`, em `plan_prices` e em `tenants`.
 - `tenants.status_locked_until`, `domains.verified_at` e `domains.verified_by` ainda não existem no banco: entram com as fatias de situação e de verificação de domínio.
+- `tenants.provisioning_status` ∈ `pending | provisioning | ready | failed`. É independente de `tenants.status`: um diz se o ambiente existe, o outro se o tenant pode operar.
 - `domains.domain` é único.
 - `domains.panel` ∈ `admin | user | customer`. `domains.status` ∈ `pending | active`.
 - `tenants.status` ∈ `active | suspended`.
@@ -165,6 +169,7 @@ Restrições:
 - `customer_user` aponta duas vezes para `users`: `user_id` é uma pessoa de tipo base `user`, `customer_id` é uma pessoa de tipo base `customer`. A validação desses tipos é regra de serviço, não do banco. Ver ADR-0003.
 - `feature_settings.feature_key` referencia `features.key` do central por valor, sem chave estrangeira.
 - `permissions` é semeada a partir do catálogo em código.
+- Enquanto a fatia de perfis não chega, a tabela de pessoas do tenant se chama `tenant_users` e tem `role` fixo. Ela já tem `must_change_password` e `password_expires_at`, que controlam a senha provisória.
 
 ## Ciclo de vida do tenant
 

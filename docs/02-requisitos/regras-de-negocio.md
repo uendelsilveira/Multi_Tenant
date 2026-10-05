@@ -16,7 +16,7 @@
 | RN12 | Uma pessoa tem exatamente um **Perfil** dentro do tenant. |
 | RN13 | O central nunca acessa o ambiente nem os dados de um **Tenant**. |
 | RN14 | **Cliente** é cadastrado apenas por **Usuário** do tenant. Não há autocadastro. |
-| RN15 | O **Admin** inicial é criado pelo central com senha provisória, de uso único, que obriga a troca no primeiro acesso. |
+| RN15 | O **Admin** inicial é criado pelo **Provisionamento**, com uma **Senha Provisória** gerada pela plataforma, gravada apenas como hash e enviada por e-mail. Ela obriga a troca no primeiro acesso. |
 | RN16 | **Tenant** suspenso opera em somente leitura: consulta sim, alteração não. |
 | RN17 | Enquanto houver trava manual vigente, eventos de cobrança são registrados mas não alteram a situação do **Tenant**. |
 | RN18 | Cada evento de cobrança produz efeito no máximo uma vez, mesmo se reenviado. |
@@ -28,6 +28,10 @@
 | RN24 | A **Exclusão** de um tenant é lógica: o banco dele é mantido, o slug e o documento continuam reservados, seus domínios deixam de responder e ele pode ser restaurado. Não existe exclusão definitiva pela aplicação. |
 | RN25 | O documento do tenant é um CPF ou CNPJ válido (inclusive CNPJ alfanumérico) e único entre os tenants. |
 | RN26 | No central, super admin e admin gerenciam planos e tenants; manager e operator apenas consultam. |
+| RN27 | O **Admin** inicial usa o nome do responsável e o e-mail de contato cadastrados no **Tenant**. Sem esses dois dados não há provisionamento. |
+| RN28 | A **Senha Provisória** vale 24 horas. O central pode mandar reenviar apenas enquanto o admin não fez o primeiro acesso; a nova senha invalida a anterior. Depois do primeiro acesso, o central não altera mais a conta. |
+| RN29 | O **Provisionamento** pode ser repetido sem efeito colateral: cada etapa confere se já foi feita, não cria um segundo admin nem envia outra senha. Qualquer tenant que não esteja pronto pode ser provisionado novamente. |
+| RN30 | Enquanto o ambiente do **Tenant** não está pronto, seus domínios respondem com uma página de espera, e não com erro. |
 
 ## Pontos em aberto
 

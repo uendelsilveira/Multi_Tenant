@@ -100,6 +100,10 @@ _Avoid_: Override, congelamento
 Criação do ambiente de um Tenant novo: banco, estrutura, Perfis de Sistema e Admin inicial.
 _Avoid_: Setup, onboarding, instalação
 
+**Senha Provisória**:
+Senha gerada pela plataforma para o primeiro acesso do Admin inicial, com validade curta e troca obrigatória.
+_Avoid_: Senha temporária, senha inicial, senha padrão
+
 ## Relationships
 
 - Um **Tenant** contrata exatamente um **Plano** e tem um ou mais **Domínios**
@@ -112,6 +116,7 @@ _Avoid_: Setup, onboarding, instalação
 - Um **Perfil** pertence a exatamente um **Tipo Base**, e o **Tipo Base** determina o **Painel**
 - Um **Usuário** atende vários **Clientes**, e um **Cliente** é atendido por vários **Usuários**
 - Um **Tenant** tem no máximo uma **Assinatura** vigente
+- O **Provisionamento** de um **Tenant** cria seu **Admin** inicial a partir do responsável e do e-mail de contato, com uma **Senha Provisória**
 
 ## Domain → Technical Mapping
 
@@ -127,7 +132,10 @@ Linhas sem "(planejado)" já estão implementadas. As demais são intenção de 
 | Alterar Tenant (dados, Plano, Ciclo, Domínios) | `UpdateTenantAction` | `TenantService` | — |
 | Excluir Tenant | `SoftDeleteTenantAction` | `TenantService` | `TenantSoftDeleted` |
 | Restaurar Tenant | `RestoreTenantAction` | `TenantService` | `TenantRestored` |
-| Provisionar Tenant (planejado) | (job) `ProvisionTenantJob` | `TenantProvisioningService` | `TenantProvisioned` |
+| Provisionar Tenant | (job) `ProvisionTenantJob` → `ProvisionTenantAction` | `TenantProvisioningService` | `TenantProvisioned` |
+| Provisionar novamente | `RetryTenantProvisioningAction` | `TenantProvisioningService` | `TenantProvisioningRetryRequested` |
+| Reenviar Senha Provisória | `RequestProvisionalPasswordResendAction` → (job) `ResendProvisionalPasswordJob` | `TenantProvisioningService` | `ProvisionalPasswordResendRequested` |
+| Trocar Senha Provisória | `ChangeProvisionalPasswordAction` | `TenantUserService` | — |
 | Verificar Domínio (planejado) | `VerifyDomainAction` | `DomainService` | `DomainVerified` |
 | Alterar Situação manualmente (planejado) | `ChangeTenantStatusAction` | `SubscriptionService` | `TenantStatusChanged` |
 | Processar evento de cobrança (planejado) | (job) `ProcessWebhookEventJob` | `SubscriptionService` | `TenantStatusChanged` |
