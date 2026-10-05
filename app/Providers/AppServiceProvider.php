@@ -14,6 +14,7 @@ namespace App\Providers;
 use App\Contracts\DnsLookupInterface;
 use App\Contracts\ProvisionalPasswordNotifierInterface;
 use App\Contracts\TenantEnvironmentInterface;
+use App\Http\Middleware\EnsureTenantIsNotSuspended;
 use App\Http\Middleware\EnsureTenantIsProvisioned;
 use App\Http\Middleware\InitializeTenancyForTenantDomain;
 use App\Models\Domain;
@@ -90,6 +91,7 @@ final class AppServiceProvider extends ServiceProvider
             RequireLivewireHeaders::class,
             InitializeTenancyForTenantDomain::class,
             EnsureTenantIsProvisioned::class,
+            EnsureTenantIsNotSuspended::class,
         ]));
     }
 }

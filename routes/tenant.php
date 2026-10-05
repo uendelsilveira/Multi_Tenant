@@ -10,6 +10,7 @@
 declare(strict_types=1);
 
 use App\Enums\DomainPanel;
+use App\Http\Middleware\EnsureTenantIsNotSuspended;
 use App\Http\Middleware\EnsureTenantIsProvisioned;
 use App\Http\Middleware\InitializeTenancyForTenantDomain;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ Route::middleware([
     InitializeTenancyForTenantDomain::class,
     PreventAccessFromCentralDomains::class,
     EnsureTenantIsProvisioned::class,
+    EnsureTenantIsNotSuspended::class,
 ])->group(function () {
     Route::get('/', function (Request $request) {
         $panel = $request->attributes->get(InitializeTenancyForTenantDomain::PANEL_ATTRIBUTE);

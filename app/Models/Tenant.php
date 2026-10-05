@@ -39,6 +39,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property int|null $plan_id
  * @property BillingCycle|null $billing_cycle
  * @property TenantStatus $status
+ * @property Carbon|null $status_locked_until
  * @property ProvisioningStatus $provisioning_status
  * @property string|null $provisioning_error
  * @property Carbon|null $provisioned_at
@@ -79,6 +80,7 @@ final class Tenant extends BaseTenant implements TenantWithDatabase
             'plan_id',
             'billing_cycle',
             'status',
+            'status_locked_until',
             'provisioning_status',
             'provisioning_error',
             'provisioned_at',
@@ -92,6 +94,12 @@ final class Tenant extends BaseTenant implements TenantWithDatabase
     public function domains(): HasMany
     {
         return $this->hasMany(Domain::class, 'tenant_id');
+    }
+
+    /** @return HasMany<TenantStatusLog, $this> */
+    public function statusLogs(): HasMany
+    {
+        return $this->hasMany(TenantStatusLog::class, 'tenant_id');
     }
 
     /** @return BelongsTo<Plan, $this> */
@@ -109,6 +117,7 @@ final class Tenant extends BaseTenant implements TenantWithDatabase
             'status' => TenantStatus::class,
             'provisioning_status' => ProvisioningStatus::class,
             'provisioned_at' => 'datetime',
+            'status_locked_until' => 'datetime',
         ];
     }
 }

@@ -7,6 +7,7 @@ namespace App\Filament\Resources\Tenants\Tables;
 use App\Enums\BillingCycle;
 use App\Enums\ProvisioningStatus;
 use App\Enums\TenantStatus;
+use App\Filament\Resources\Tenants\Actions\TenantChangeStatusAction;
 use App\Filament\Resources\Tenants\Actions\TenantResendPasswordAction;
 use App\Filament\Resources\Tenants\Actions\TenantRestoreAction;
 use App\Filament\Resources\Tenants\Actions\TenantRetryProvisioningAction;
@@ -48,7 +49,10 @@ final class TenantsTable
                     ->label('Situação')
                     ->badge()
                     ->formatStateUsing(fn (?TenantStatus $state): ?string => $state?->label())
-                    ->color(fn (?TenantStatus $state): string => $state === TenantStatus::Active ? 'success' : 'warning'),
+                    ->color(fn (?TenantStatus $state): string => $state === TenantStatus::Active ? 'success' : 'warning')
+                    ->description(fn (Tenant $record): ?string => $record->status_locked_until?->isFuture()
+                        ? 'Travado até '.$record->status_locked_until->format('d/m/Y H:i')
+                        : null),
                 TextColumn::make('created_at')
                     ->label('Criado em')
                     ->dateTime('d/m/Y H:i')
@@ -60,6 +64,7 @@ final class TenantsTable
             ->recordActions([
                 EditAction::make(),
                 ActionGroup::make([
+                    TenantChangeStatusAction::make(),
                     TenantRetryProvisioningAction::make(),
                     TenantResendPasswordAction::make(),
                     TenantSoftDeleteAction::make(),

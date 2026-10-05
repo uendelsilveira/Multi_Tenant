@@ -7,7 +7,10 @@ namespace App\Repositories\Contracts;
 use App\DTOs\Tenant\CreateTenantDTO;
 use App\DTOs\Tenant\UpdateTenantDTO;
 use App\Enums\ProvisioningStatus;
+use App\Enums\TenantStatus;
+use App\Enums\TenantStatusSource;
 use App\Models\Tenant;
+use Carbon\CarbonInterface;
 
 interface TenantRepositoryInterface
 {
@@ -32,6 +35,18 @@ interface TenantRepositoryInterface
      * @return list<string> hosts já cadastrados em outro tenant
      */
     public function hostsInUse(array $hosts, ?string $exceptTenantId = null): array;
+
+    /**
+     * Grava a nova situação e a trava, e acrescenta a mudança ao histórico, na mesma transação.
+     */
+    public function changeStatus(
+        Tenant $tenant,
+        TenantStatus $to,
+        TenantStatusSource $source,
+        ?int $centralUserId,
+        ?string $reason,
+        ?CarbonInterface $lockedUntil,
+    ): void;
 
     /** Ao ficar pronto, registra o momento e limpa o erro anterior. */
     public function updateProvisioning(Tenant $tenant, ProvisioningStatus $status, ?string $error = null): void;

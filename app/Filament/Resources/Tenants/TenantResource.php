@@ -7,6 +7,7 @@ namespace App\Filament\Resources\Tenants;
 use App\Filament\Resources\Tenants\Pages\CreateTenant;
 use App\Filament\Resources\Tenants\Pages\EditTenant;
 use App\Filament\Resources\Tenants\Pages\ListTenants;
+use App\Filament\Resources\Tenants\RelationManagers\StatusLogsRelationManager;
 use App\Filament\Resources\Tenants\Schemas\TenantForm;
 use App\Filament\Resources\Tenants\Tables\TenantsTable;
 use App\Models\Tenant;
@@ -51,6 +52,14 @@ final class TenantResource extends Resource
     {
         return parent::getRecordRouteBindingEloquentQuery()
             ->withoutGlobalScopes([SoftDeletingScope::class]);
+    }
+
+    /** @return array<int, class-string> */
+    public static function getRelations(): array
+    {
+        return [
+            StatusLogsRelationManager::class,
+        ];
     }
 
     /** @return array<string, PageRegistration> */

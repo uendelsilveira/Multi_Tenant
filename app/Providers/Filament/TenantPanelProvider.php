@@ -8,6 +8,7 @@ use App\Enums\DomainPanel;
 use App\Filament\Tenant\Pages\ChangeProvisionalPassword;
 use App\Http\Middleware\EnforceProvisionalPasswordChange;
 use App\Http\Middleware\EnsureDomainMatchesPanel;
+use App\Http\Middleware\EnsureTenantIsNotSuspended;
 use App\Http\Middleware\EnsureTenantIsProvisioned;
 use App\Http\Middleware\InitializeTenancyForTenantDomain;
 use Filament\Http\Middleware\Authenticate;
@@ -71,6 +72,7 @@ abstract class TenantPanelProvider extends PanelProvider
                 InitializeTenancyForTenantDomain::class,
                 PreventAccessFromCentralDomains::class,
                 EnsureTenantIsProvisioned::class,
+                EnsureTenantIsNotSuspended::class,
                 EnsureDomainMatchesPanel::class.':'.$domainPanel->value,
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

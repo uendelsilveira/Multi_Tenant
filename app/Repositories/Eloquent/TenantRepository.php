@@ -10,9 +10,11 @@ use App\DTOs\Tenant\UpdateTenantDTO;
 use App\Enums\DomainStatus;
 use App\Enums\ProvisioningStatus;
 use App\Enums\TenantStatus;
+use App\Enums\TenantStatusSource;
 use App\Models\Domain;
 use App\Models\Tenant;
 use App\Repositories\Contracts\TenantRepositoryInterface;
+use Carbon\CarbonInterface;
 
 final class TenantRepository implements TenantRepositoryInterface
 {
@@ -99,6 +101,33 @@ final class TenantRepository implements TenantRepositoryInterface
             ->pluck('domain');
 
         return array_values(array_map(strval(...), $inUse->all()));
+    }
+
+    public function changeStatus(
+        Tenant $tenant,
+        TenantStatus $to,
+        TenantStatusSource $source,
+        ?int $centralUserId,
+        ?string $reason,
+        ?CarbonInterface $lockedUntil,
+    ): void {
+        $tenant->getConnection()->transaction(function () use ($tenant, $to, $source, $centralUserId, $reason, $lockedUntil): void {
+            $from = $tenant->status;
+
+            $tenant->update([
+                'status' => $to->value,
+                'status_locked_until' => $lockedUntil,
+            ]);
+
+            $tenant->statusLogs()->create([
+                'from_status' => $from->value,
+                'to_status' => $to->value,
+                'source' => $source->value,
+                'central_user_id' => $centralUserId,
+                'reason' => $reason,
+                'locked_until' => $lockedUntil,
+            ]);
+        });
     }
 
     public function updateProvisioning(Tenant $tenant, ProvisioningStatus $status, ?string $error = null): void

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Http\Middleware\EnsureTenantIsNotSuspended;
 use App\Http\Middleware\EnsureTenantIsProvisioned;
 use App\Http\Middleware\InitializeTenancyForTenantDomain;
 use Illuminate\Contracts\Http\Kernel;
@@ -147,6 +148,7 @@ final class TenancyServiceProvider extends ServiceProvider
                 // logo depois de identificar o tenant e antes da sessão, que já usa o banco dele.
                 InitializeTenancyForTenantDomain::class,
                 EnsureTenantIsProvisioned::class,
+                EnsureTenantIsNotSuspended::class,
             ];
 
             foreach (array_reverse($tenancyMiddleware) as $middleware) {
