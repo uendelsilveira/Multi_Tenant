@@ -8,6 +8,7 @@ use App\DTOs\Tenant\CreateTenantDTO;
 use App\DTOs\Tenant\TenantDomainDTO;
 use App\DTOs\Tenant\UpdateTenantDTO;
 use App\Enums\DomainStatus;
+use App\Enums\ProvisioningStatus;
 use App\Enums\TenantStatus;
 use App\Models\Domain;
 use App\Models\Tenant;
@@ -16,30 +17,32 @@ use App\Repositories\Contracts\TenantRepositoryInterface;
 final class TenantRepository implements TenantRepositoryInterface
 {
     /**
-     * Sem transação de propósito: criar o tenant dispara a criação do banco
-     * dele (DDL), e no MySQL isso encerra qualquer transação aberta. As regras
-     * são todas validadas no Service antes de chegar aqui.
+     * Grava só o cadastro, no banco central. O banco do tenant é criado depois,
+     * pelo provisionamento, fora desta transação.
      */
     public function create(CreateTenantDTO $dto): Tenant
     {
-        /** @var Tenant $tenant */
-        $tenant = Tenant::query()->create([
-            'id' => $dto->slug,
-            ...$dto->company->toAttributes(),
-            'plan_id' => $dto->planId,
-            'billing_cycle' => $dto->billingCycle->value,
-            'status' => TenantStatus::Active->value,
-        ]);
-
-        foreach ($dto->domains as $domain) {
-            $tenant->domains()->create([
-                'domain' => $domain->host,
-                'panel' => $domain->panel->value,
-                'status' => DomainStatus::Pending->value,
+        return (new Tenant)->getConnection()->transaction(function () use ($dto): Tenant {
+            /** @var Tenant $tenant */
+            $tenant = Tenant::query()->create([
+                'id' => $dto->slug,
+                ...$dto->company->toAttributes(),
+                'plan_id' => $dto->planId,
+                'billing_cycle' => $dto->billingCycle->value,
+                'status' => TenantStatus::Active->value,
+                'provisioning_status' => ProvisioningStatus::Pending->value,
             ]);
-        }
 
-        return $tenant->load('domains');
+            foreach ($dto->domains as $domain) {
+                $tenant->domains()->create([
+                    'domain' => $domain->host,
+                    'panel' => $domain->panel->value,
+                    'status' => DomainStatus::Pending->value,
+                ]);
+            }
+
+            return $tenant->load('domains');
+        });
     }
 
     public function update(Tenant $tenant, UpdateTenantDTO $dto): Tenant
@@ -96,6 +99,15 @@ final class TenantRepository implements TenantRepositoryInterface
             ->pluck('domain');
 
         return array_values(array_map(strval(...), $inUse->all()));
+    }
+
+    public function updateProvisioning(Tenant $tenant, ProvisioningStatus $status, ?string $error = null): void
+    {
+        $tenant->update([
+            'provisioning_status' => $status->value,
+            'provisioning_error' => $status === ProvisioningStatus::Failed ? $error : null,
+            'provisioned_at' => $status === ProvisioningStatus::Ready ? now() : $tenant->provisioned_at,
+        ]);
     }
 
     /** @param list<TenantDomainDTO> $domains */

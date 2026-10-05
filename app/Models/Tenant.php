@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\BillingCycle;
 use App\Enums\PersonType;
+use App\Enums\ProvisioningStatus;
 use App\Enums\TenantStatus;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,6 +39,9 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
  * @property int|null $plan_id
  * @property BillingCycle|null $billing_cycle
  * @property TenantStatus $status
+ * @property ProvisioningStatus $provisioning_status
+ * @property string|null $provisioning_error
+ * @property Carbon|null $provisioned_at
  * @property Carbon|null $deleted_at
  * @property string|null $tenancy_db_name
  * @property-read Plan|null $plan
@@ -75,6 +79,9 @@ final class Tenant extends BaseTenant implements TenantWithDatabase
             'plan_id',
             'billing_cycle',
             'status',
+            'provisioning_status',
+            'provisioning_error',
+            'provisioned_at',
             'created_at',
             'updated_at',
             'deleted_at',
@@ -100,6 +107,8 @@ final class Tenant extends BaseTenant implements TenantWithDatabase
             'person_type' => PersonType::class,
             'billing_cycle' => BillingCycle::class,
             'status' => TenantStatus::class,
+            'provisioning_status' => ProvisioningStatus::class,
+            'provisioned_at' => 'datetime',
         ];
     }
 }

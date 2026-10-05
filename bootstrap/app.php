@@ -12,6 +12,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Stancl\Tenancy\Exceptions\TenantCouldNotBeIdentifiedOnDomainException;
+use Stancl\Tenancy\Exceptions\TenantDatabaseDoesNotExistException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,6 +25,12 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(fn (TenantDatabaseDoesNotExistException $e) => response()
+            ->view('tenant.provisioning', status: 503)
+            ->header('Retry-After', '30'));
+
+        $exceptions->render(fn (TenantCouldNotBeIdentifiedOnDomainException $e) => response('Página não encontrada.', 404));
+
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );

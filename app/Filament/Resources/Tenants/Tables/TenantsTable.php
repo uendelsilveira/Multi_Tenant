@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Tenants\Tables;
 
 use App\Enums\BillingCycle;
+use App\Enums\ProvisioningStatus;
 use App\Enums\TenantStatus;
+use App\Filament\Resources\Tenants\Actions\TenantResendPasswordAction;
 use App\Filament\Resources\Tenants\Actions\TenantRestoreAction;
+use App\Filament\Resources\Tenants\Actions\TenantRetryProvisioningAction;
 use App\Filament\Resources\Tenants\Actions\TenantSoftDeleteAction;
+use App\Models\Tenant;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
@@ -18,6 +23,7 @@ final class TenantsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->poll('10s')
             ->columns([
                 TextColumn::make('id')
                     ->label('Slug')
@@ -32,6 +38,12 @@ final class TenantsTable
                     ->label('Ciclo')
                     ->formatStateUsing(fn (?BillingCycle $state): ?string => $state?->label())
                     ->placeholder('—'),
+                TextColumn::make('provisioning_status')
+                    ->label('Ambiente')
+                    ->badge()
+                    ->formatStateUsing(fn (?ProvisioningStatus $state): ?string => $state?->label())
+                    ->color(fn (?ProvisioningStatus $state): string => $state?->color() ?? 'gray')
+                    ->tooltip(fn (Tenant $record): ?string => $record->provisioning_error),
                 TextColumn::make('status')
                     ->label('Situação')
                     ->badge()
@@ -47,8 +59,12 @@ final class TenantsTable
             ])
             ->recordActions([
                 EditAction::make(),
-                TenantSoftDeleteAction::make(),
-                TenantRestoreAction::make(),
+                ActionGroup::make([
+                    TenantRetryProvisioningAction::make(),
+                    TenantResendPasswordAction::make(),
+                    TenantSoftDeleteAction::make(),
+                    TenantRestoreAction::make(),
+                ]),
             ]);
     }
 }

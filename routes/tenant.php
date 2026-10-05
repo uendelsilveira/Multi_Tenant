@@ -9,6 +9,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\EnsureTenantIsProvisioned;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -29,6 +30,7 @@ Route::middleware([
     'web',
     InitializeTenancyByDomain::class,
     PreventAccessFromCentralDomains::class,
+    EnsureTenantIsProvisioned::class,
 ])->group(function () {
     Route::get('/', function () {
         return redirect('/admin');

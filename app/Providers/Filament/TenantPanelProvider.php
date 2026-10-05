@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
+use App\Http\Middleware\EnforceProvisionalPasswordChange;
+use App\Http\Middleware\EnsureTenantIsProvisioned;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -36,6 +38,7 @@ final class TenantPanelProvider extends PanelProvider
             ->id('tenant')
             ->path('admin')
             ->login()
+            ->passwordReset()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -61,9 +64,11 @@ final class TenantPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
                 InitializeTenancyByDomain::class,
                 PreventAccessFromCentralDomains::class,
+                EnsureTenantIsProvisioned::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
+                EnforceProvisionalPasswordChange::class,
             ]);
     }
 }

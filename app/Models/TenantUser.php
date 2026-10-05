@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  By Uendel Silveira
  Developer Web
@@ -17,9 +18,15 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 
 /**
+ * @property int $id
+ * @property string $name
+ * @property string $email
  * @property UserRole|null $role
+ * @property bool $must_change_password
+ * @property Carbon|null $password_expires_at
  */
 final class TenantUser extends Authenticatable implements FilamentUser
 {
@@ -33,21 +40,14 @@ final class TenantUser extends Authenticatable implements FilamentUser
         'email',
         'password',
         'role',
+        'must_change_password',
+        'password_expires_at',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => UserRole::class,
-        ];
-    }
 
     public function canAccessPanel(Panel $panel): bool
     {
@@ -79,5 +79,16 @@ final class TenantUser extends Authenticatable implements FilamentUser
         $roleValue = $role instanceof UserRole ? $role->value : $role;
 
         return $this->role !== null && $this->role->value === $roleValue;
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'role' => UserRole::class,
+            'must_change_password' => 'boolean',
+            'password_expires_at' => 'datetime',
+        ];
     }
 }

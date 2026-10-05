@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Http\Middleware\EnsureTenantIsProvisioned;
 use App\Models\TenantUser;
 use App\Models\User;
 use Illuminate\Contracts\Http\Kernel;
@@ -36,21 +37,9 @@ final class TenancyServiceProvider extends ServiceProvider
         return [
             // Tenant events
             Events\CreatingTenant::class => [],
-            Events\TenantCreated::class => [
-                JobPipeline::make([
-                    Jobs\CreateDatabase::class,
-                    Jobs\MigrateDatabase::class,
-                    // Sem Jobs\SeedDatabase: o comando tenants:seed não existe nesta versão do
-                    // Laravel e o seeder criava usuários com senha padrão. O admin inicial
-                    // nasce no provisionamento (fatia 2, RF11).
-
-                    // Your own jobs to prepare the tenant.
-                    // Provision API keys, create S3 buckets, anything you want!
-
-                ])->send(function (Events\TenantCreated $event) {
-                    return $event->tenant;
-                })->shouldBeQueued(false), // `false` by default, but you probably want to make this `true` for production.
-            ],
+            // O banco do tenant não é mais criado aqui. O cadastro emite TenantRegistered
+            // e o provisionamento roda em fila (App\Jobs\ProvisionTenantJob, RF11).
+            Events\TenantCreated::class => [],
             Events\SavingTenant::class => [],
             Events\TenantSaved::class => [],
             Events\UpdatingTenant::class => [],
@@ -160,6 +149,9 @@ final class TenancyServiceProvider extends ServiceProvider
                 Middleware\InitializeTenancyByDomainOrSubdomain::class,
                 Middleware\InitializeTenancyByPath::class,
                 Middleware\InitializeTenancyByRequestData::class,
+
+                // Logo depois de identificar o tenant e antes da sessão, que já usa o banco dele.
+                EnsureTenantIsProvisioned::class,
             ];
 
             foreach (array_reverse($tenancyMiddleware) as $middleware) {

@@ -6,6 +6,7 @@ namespace App\Repositories\Contracts;
 
 use App\DTOs\Tenant\CreateTenantDTO;
 use App\DTOs\Tenant\UpdateTenantDTO;
+use App\Enums\ProvisioningStatus;
 use App\Models\Tenant;
 
 interface TenantRepositoryInterface
@@ -31,4 +32,7 @@ interface TenantRepositoryInterface
      * @return list<string> hosts já cadastrados em outro tenant
      */
     public function hostsInUse(array $hosts, ?string $exceptTenantId = null): array;
+
+    /** Ao ficar pronto, registra o momento e limpa o erro anterior. */
+    public function updateProvisioning(Tenant $tenant, ProvisioningStatus $status, ?string $error = null): void;
 }

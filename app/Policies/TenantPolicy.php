@@ -43,6 +43,16 @@ final class TenantPolicy
         return $this->canManage($user);
     }
 
+    public function retryProvisioning(User $user, Tenant $tenant): bool
+    {
+        return $this->canManage($user);
+    }
+
+    public function resendProvisionalPassword(User $user, Tenant $tenant): bool
+    {
+        return $this->canManage($user);
+    }
+
     public function forceDelete(User $user, Tenant $tenant): bool
     {
         return false;

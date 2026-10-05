@@ -6,6 +6,7 @@ namespace Tests\Feature\Tenancy;
 
 use App\Actions\Tenant\RestoreTenantAction;
 use App\Actions\Tenant\SoftDeleteTenantAction;
+use App\Contracts\TenantEnvironmentInterface;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -51,13 +52,12 @@ final class SoftDeleteKeepsTenantDatabaseTest extends TestCase
     public function test_soft_deleting_a_tenant_keeps_its_database(): void
     {
         $this->tenantId = 'softdel-'.Str::lower(Str::random(8));
-
         $this->databaseName = config('tenancy.database.prefix').$this->tenantId.config('tenancy.database.suffix');
 
         $tenant = Tenant::query()->create(['id' => $this->tenantId, 'legal_name' => 'Teste de exclusão lógica']);
+        app(TenantEnvironmentInterface::class)->ensureDatabaseExists($tenant);
 
         $this->assertSame($this->databaseName, $tenant->database()->getName());
-
         $this->assertTrue($this->databaseExists(), 'O banco do tenant deveria ter sido criado.');
 
         app(SoftDeleteTenantAction::class)->execute($tenant->id);
