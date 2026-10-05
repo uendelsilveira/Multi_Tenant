@@ -38,8 +38,9 @@
 
 | ID | Requisito |
 |---|---|
-| RF12 | O **Admin** cadastra, edita e desativa usuários do tenant e atribui a cada um exatamente um **Perfil**. |
-| RF13 | O **Admin** cria **Perfis Customizados** escolhendo um **Tipo Base** e marcando permissões de um catálogo fixo. |
+| RF12 | Quem tem a **Permissão** de gerenciar pessoas cadastra, edita, desativa e reativa pessoas dos tipos admin e usuário, atribuindo a cada uma exatamente um **Perfil**. Clientes têm cadastro próprio. |
+| RF13 | Quem tem a **Permissão** de gerenciar perfis cria, altera e exclui **Perfis Customizados**, escolhendo um **Tipo Base** e marcando **Permissões** do catálogo que valem para aquele tipo. |
+| RF26 | A pessoa recém-cadastrada recebe por e-mail uma **Senha Provisória** e o endereço do painel do seu tipo. Quem gerencia pessoas pode mandar reenviar enquanto ela não fez o primeiro acesso. |
 | RF14 | O **Admin** liga e desliga, na tela de configurações, as **Funcionalidades** contidas no **Plano** do tenant. |
 | RF15 | Uma **Funcionalidade** inativa não aparece no menu, tem suas telas bloqueadas e não executa processamento em segundo plano. |
 | RF16 | O **Usuário** cadastra um **Cliente**, que fica vinculado a ele. |

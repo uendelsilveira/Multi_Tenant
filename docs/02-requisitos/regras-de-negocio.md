@@ -11,8 +11,8 @@
 | RN07 | Na troca para um plano menor, as funcionalidades que saíram são desligadas imediatamente. |
 | RN08 | Existem três **Tipos Base**: admin, usuário e cliente. Cada um corresponde a um **Painel**. |
 | RN09 | Os três **Perfis de Sistema** existem em todo tenant e não podem ser editados nem excluídos. |
-| RN10 | Um **Perfil Customizado** herda um **Tipo Base**, e é o tipo base que define o painel. |
-| RN11 | Permissões formam um catálogo fixo. O tenant combina permissões, não cria novas. |
+| RN10 | Um **Perfil Customizado** tem um **Tipo Base**, e é o tipo base que define o painel. O tipo pode ser trocado depois: as pessoas do perfil passam a entrar no outro painel e as permissões que não valem para o novo tipo são descartadas. |
+| RN11 | **Permissões** formam um catálogo fixo, declarado na plataforma, e cada uma vale para um ou mais tipos base. O tenant combina permissões, não cria novas. |
 | RN12 | Uma pessoa tem exatamente um **Perfil** dentro do tenant. |
 | RN13 | O central nunca acessa o ambiente nem os dados de um **Tenant**. |
 | RN14 | **Cliente** é cadastrado apenas por **Usuário** do tenant. Não há autocadastro. |
@@ -34,8 +34,12 @@
 | RN30 | Enquanto o ambiente do **Tenant** não está pronto, seus domínios respondem com uma página de espera, e não com erro. |
 | RN31 | Todo **Domínio** passa pela verificação manual, inclusive subdomínio da própria plataforma. Trocar o endereço de um domínio cria um domínio novo, pendente. Trocar só o painel mantém a verificação. |
 | RN32 | Cada **Painel** de tenant tem um caminho fixo dentro do domínio que aponta para ele: admin em `/admin`, usuário em `/app`, cliente em `/portal`. A raiz do domínio leva a esse caminho. |
-| RN33 | Enquanto os **Perfis** não existem, cada pessoa do tenant tem diretamente um **Tipo Base** (admin, usuário ou cliente). Pessoa sem tipo reconhecido não entra em painel nenhum. |
+| RN33 | O **Tipo Base** de uma pessoa do tenant é o do perfil dela. Pessoa desativada, sem perfil ou com perfil de tipo não reconhecido não entra em painel nenhum. |
 | RN34 | Excluir um tenant, remover um domínio ou trocar seu endereço fecha o acesso na hora, sem esperar a expiração de cache. |
+| RN35 | Um **Perfil de Sistema** tem sempre todas as permissões do seu tipo base. Um **Perfil Customizado** tem só as marcadas. |
+| RN36 | O tenant nunca fica sem uma pessoa ativa que possa gerenciar pessoas. Toda alteração que levaria a isso é recusada: desativar a pessoa, trocar o perfil dela, tirar a permissão do perfil ou trocar o tipo do perfil. Ninguém desativa a própria conta. |
+| RN37 | Pessoa não é excluída, só desativada, e pode ser reativada. Perfil com pessoas vinculadas não é excluído. |
+| RN38 | Pessoa nova nasce sem senha utilizável. O acesso vem por **Senha Provisória** de 24 horas, enviada ao e-mail dela, com troca obrigatória. O e-mail é único entre as pessoas do tenant. |
 
 ## Pontos em aberto
 
@@ -43,6 +47,6 @@ Não foram decididos na entrevista. Cada um vira RN (ou item de "fora do escopo"
 
 1. **Carência antes de suspender.** Quantos dias entre a falha de pagamento e a suspensão? Recomendação: 3 a 5 dias, com aviso no painel admin.
 2. **Admin cadastra cliente?** A regra dita foi "cliente é cadastrado por usuário do tenant". O admin vê todos os clientes, mas não ficou dito se ele também cadastra e vincula.
-3. **Tipo base de perfil customizado pode mudar depois de criado?** Recomendação: não, pois mudaria o painel de todos os usuários daquele perfil.
+3. ~~Tipo base de perfil customizado pode mudar depois de criado?~~ Decidido: pode mudar sempre (RN10), respeitada a RN36.
 4. **Valor pago no downgrade.** Com o desligamento imediato, o tenant perde o que pagou até o fim do ciclo. Definir política (crédito, proporcional ou sem devolução).
 5. **Cancelamento de assinatura.** Cancelado é igual a suspenso (somente leitura) ou há um estado final com prazo para retirada dos dados?

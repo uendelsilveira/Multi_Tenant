@@ -17,8 +17,8 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 | RF09 | RN08, RN33 | — | `TenantUser::canAccessPanel`, `User::canAccessPanel`, guard `tenant` | `UnknownRoleTest`, `TenantProvisioningFlowTest` |
 | RF10 | RN15, RN28 | — | `EnforceProvisionalPasswordChange`, página `ChangeProvisionalPassword` → `ChangeProvisionalPasswordAction` → `TenantUserService` | `TenantUserServiceTest`, `TenantProvisioningFlowTest` |
 | RF11 | RN15, RN27, RN29 | — | `TenantRegistered` → `DispatchTenantProvisioning` → `ProvisionTenantJob` → `ProvisionTenantAction` → `TenantProvisioningService` | `TenantProvisioningServiceTest`, `TenantProvisioningActionsTest`, `TenantProvisioningFlowTest` |
-| RF12 | RN12 | — | `UserService` | — |
-| RF13 | RN09, RN10, RN11 | — | `RoleService` | — |
+| RF12 | RN12, RN33, RN36, RN37 | — | `PersonResource` → `CreateTenantUserAction`, `UpdateTenantUserAction`, `DeactivateTenantUserAction`, `ActivateTenantUserAction` → `TenantUserService`, `TenantAccessService` | `TenantUserServiceTest`, `TenantAccessServiceTest`, `TenantPeopleAndRolesTest` |
+| RF13 | RN09, RN10, RN11, RN35, RN36, RN37 | — | `RoleResource` → `CreateRoleAction`, `UpdateRoleAction`, `DeleteRoleAction` → `RoleService`, `PermissionCatalog` | `RoleServiceTest`, `TenantAccessServiceTest`, `TenantPeopleAndRolesTest` |
 | RF14 | RN04, RN05 | — | `FeatureService`, `feature_settings` | — |
 | RF15 | RN04 | — | `FeatureService` (menu, rota e jobs) | — |
 | RF16 | RN14 | — | `CreateCustomerAction` → `CustomerService` | — |
@@ -31,6 +31,7 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 | RF23 | RN29 | — | `RetryTenantProvisioningAction` → `TenantProvisioningService`; `ProvisionTenantJob::failed` → `MarkTenantProvisioningFailedAction` | `TenantProvisioningServiceTest`, `TenantProvisioningActionsTest` |
 | RF24 | RN28 | — | `RequestProvisionalPasswordResendAction` → `ResendProvisionalPasswordJob` → `ResendProvisionalPasswordAction` | `TenantProvisioningServiceTest`, `TenantProvisioningFlowTest` |
 | RF25 | RN30 | — | `EnsureTenantIsProvisioned` | `UnprovisionedTenantTest` |
+| RF26 | RN28, RN38 | — | `TenantUserAccessRequested` → `DispatchProvisionalPasswordIssue` → `IssueTenantUserProvisionalPasswordJob` → `TenantUserService` | `TenantUserServiceTest`, `TenantPeopleAndRolesTest` |
 
 ## RNs ainda sem RF
 

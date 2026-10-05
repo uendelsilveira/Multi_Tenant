@@ -62,6 +62,10 @@ _Avoid_: Perfil padrão, perfil fixo
 Perfil criado pelo Admin a partir de um Tipo Base.
 _Avoid_: Perfil personalizado, perfil do tenant
 
+**Permissão**:
+Algo que um Perfil autoriza a fazer, tirado de um catálogo fixo da plataforma e válido para um ou mais Tipos Base.
+_Avoid_: Direito, acesso, privilégio
+
 ### Comercial
 
 **Plano**:
@@ -114,7 +118,8 @@ _Avoid_: Senha temporária, senha inicial, senha padrão
 - Uma **Funcionalidade** está ativa quando está no **Plano** e ligada pelo **Admin**
 - Uma pessoa do **Tenant** tem exatamente um **Perfil**
 - Um **Perfil** pertence a exatamente um **Tipo Base**, e o **Tipo Base** determina o **Painel**
-- Enquanto os **Perfis** não existem, cada pessoa do **Tenant** carrega diretamente o seu **Tipo Base**
+- O **Tipo Base** de uma pessoa do **Tenant** é o do **Perfil** dela
+- Um **Perfil de Sistema** tem todas as permissões do seu **Tipo Base**; um **Perfil Customizado**, as que o **Admin** marcar
 - Só **Domínio** verificado responde; cada **Domínio** serve um único **Painel**, no caminho próprio dele
 - Um **Usuário** atende vários **Clientes**, e um **Cliente** é atendido por vários **Usuários**
 - Um **Tenant** tem no máximo uma **Assinatura** vigente
@@ -144,7 +149,11 @@ Linhas sem "(planejado)" já estão implementadas. As demais são intenção de 
 | Alterar Situação manualmente (planejado) | `ChangeTenantStatusAction` | `SubscriptionService` | `TenantStatusChanged` |
 | Processar evento de cobrança (planejado) | (job) `ProcessWebhookEventJob` | `SubscriptionService` | `TenantStatusChanged` |
 | Ligar/desligar Funcionalidade (planejado) | `ToggleFeatureAction` | `FeatureService` | `FeatureToggled` |
-| Criar Perfil Customizado (planejado) | `CreateRoleAction` | `RoleService` | — |
+| Criar, alterar e excluir Perfil Customizado | `CreateRoleAction`, `UpdateRoleAction`, `DeleteRoleAction` | `RoleService` | — |
+| Cadastrar pessoa do Tenant | `CreateTenantUserAction` | `TenantUserService` | `TenantUserAccessRequested` |
+| Alterar pessoa do Tenant | `UpdateTenantUserAction` | `TenantUserService` | — |
+| Desativar e reativar pessoa | `DeactivateTenantUserAction`, `ActivateTenantUserAction` | `TenantUserService` | — |
+| Emitir Senha Provisória de uma pessoa | `RequestTenantUserProvisionalPasswordAction` → (job) `IssueTenantUserProvisionalPasswordJob` | `TenantUserService` | `TenantUserAccessRequested` |
 | Cadastrar Cliente (planejado) | `CreateCustomerAction` | `CustomerService` | `CustomerCreated` |
 
 ## Example dialogue

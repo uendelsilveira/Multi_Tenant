@@ -126,8 +126,6 @@ Restrições:
 ```mermaid
 erDiagram
     ROLES ||--o{ USERS : "atribuido a"
-    ROLES ||--o{ ROLE_PERMISSION : concede
-    PERMISSIONS ||--o{ ROLE_PERMISSION : "concedida em"
     USERS ||--o{ CUSTOMER_USER : "atende (user_id)"
     USERS ||--o{ CUSTOMER_USER : "e atendido (customer_id)"
 
@@ -137,21 +135,16 @@ erDiagram
         string email
         string password
         id role_id
+        bool is_active
         bool must_change_password
+        datetime password_expires_at
     }
     ROLES {
         id id
         string name
         string base_type
         bool is_system
-    }
-    PERMISSIONS {
-        id id
-        string key
-    }
-    ROLE_PERMISSION {
-        id role_id
-        id permission_id
+        json permissions
     }
     CUSTOMER_USER {
         id user_id
@@ -168,8 +161,10 @@ Restrições:
 - `roles.base_type` ∈ `admin | user | customer`.
 - `customer_user` aponta duas vezes para `users`: `user_id` é uma pessoa de tipo base `user`, `customer_id` é uma pessoa de tipo base `customer`. A validação desses tipos é regra de serviço, não do banco. Ver ADR-0003.
 - `feature_settings.feature_key` referencia `features.key` do central por valor, sem chave estrangeira.
-- `permissions` é semeada a partir do catálogo em código.
-- Enquanto a fatia de perfis não chega, a tabela de pessoas do tenant se chama `tenant_users` e tem `role` fixo. No lugar do perfil, ela tem a coluna `type` ∈ `admin | user | customer`, que é o tipo base da pessoa. Também tem `must_change_password` e `password_expires_at`, que controlam a senha provisória.
+- As permissões não têm tabela: o catálogo fica em `config/permissions.php` e `roles.permissions` guarda as chaves marcadas em um perfil customizado (ADR-0009). Perfil de sistema não usa a coluna.
+- Os três perfis de sistema são criados pela própria migration, em todo tenant.
+- `users.must_change_password` e `users.password_expires_at` controlam a senha provisória; `users.is_active` a desativação.
+- `customer_user` ainda não existe: entra com a fatia de clientes.
 
 ## Ciclo de vida do tenant
 
