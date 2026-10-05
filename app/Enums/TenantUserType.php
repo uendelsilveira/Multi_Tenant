@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Enums;
 
 /**
- * Tipo base de uma pessoa do tenant (RN08). Cada tipo corresponde a um painel.
+ * Tipo base de um perfil do tenant (RN08). Cada tipo corresponde a um painel.
  */
 enum TenantUserType: string
 {
@@ -25,5 +25,17 @@ enum TenantUserType: string
             self::User => DomainPanel::User,
             self::Customer => DomainPanel::Customer,
         };
+    }
+
+    /** @return array<string, string> */
+    public static function options(): array
+    {
+        $options = [];
+
+        foreach (self::cases() as $case) {
+            $options[$case->value] = $case->label();
+        }
+
+        return $options;
     }
 }

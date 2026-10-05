@@ -17,16 +17,18 @@ final class MailProvisionalPasswordNotifier implements ProvisionalPasswordNotifi
     public function send(TenantUser $admin, Tenant $tenant, string $plainPassword, CarbonInterface $expiresAt): void
     {
         $admin->notify(new ProvisionalPasswordNotification(
-            loginUrl: $this->loginUrl($tenant),
+            loginUrl: $this->loginUrl($admin, $tenant),
             plainPassword: $plainPassword,
             expiresAt: $expiresAt,
         ));
     }
 
-    private function loginUrl(Tenant $tenant): string
+    private function loginUrl(TenantUser $admin, Tenant $tenant): string
     {
+        $panel = $admin->type?->panel() ?? DomainPanel::Admin;
+
         /** @var Domain|null $domain */
-        $domain = $tenant->domains->first(fn (Domain $domain): bool => $domain->panel === DomainPanel::Admin)
+        $domain = $tenant->domains->first(fn (Domain $domain): bool => $domain->panel === $panel)
             ?? $tenant->domains->first();
 
         $scheme = parse_url((string) config('app.url'), PHP_URL_SCHEME) ?: 'https';

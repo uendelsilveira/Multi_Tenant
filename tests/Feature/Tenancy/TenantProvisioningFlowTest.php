@@ -18,6 +18,7 @@ use App\Enums\TenantUserType;
 use App\Exceptions\Tenant\ProvisionalPasswordException;
 use App\Exceptions\Tenant\TenantProvisioningException;
 use App\Filament\Tenant\Pages\ChangeProvisionalPassword;
+use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\TenantUser;
 use App\Notifications\ProvisionalPasswordNotification;
@@ -184,7 +185,7 @@ final class TenantProvisioningFlowTest extends TestCase
             'name' => 'Bruno Lima',
             'email' => 'bruno@acme.test',
             'password' => 'SenhaDoBruno123',
-            'type' => TenantUserType::User,
+            'role_id' => Role::query()->where('is_system', true)->where('base_type', TenantUserType::User->value)->valueOrFail('id'),
         ]));
 
         // Cada um entra no painel do seu tipo...
@@ -265,7 +266,11 @@ final class TenantProvisioningFlowTest extends TestCase
 
     private function admin(Tenant $tenant): TenantUser
     {
-        return $tenant->run(fn (): TenantUser => TenantUser::query()->where('type', TenantUserType::Admin->value)->firstOrFail());
+        return $tenant->run(fn (): TenantUser => TenantUser::query()
+            ->with('role')
+            ->whereHas('role', fn ($query) => $query->where('base_type', TenantUserType::Admin->value))
+            ->orderBy('id')
+            ->firstOrFail());
     }
 
     /** Entre requisições de pessoas diferentes: volta ao contexto central e zera a sessão. */

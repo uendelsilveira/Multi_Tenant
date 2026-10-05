@@ -23,13 +23,16 @@ use App\Observers\TenantObserver;
 use App\Repositories\Contracts\DomainRepositoryInterface;
 use App\Repositories\Contracts\FeatureRepositoryInterface;
 use App\Repositories\Contracts\PlanRepositoryInterface;
+use App\Repositories\Contracts\RoleRepositoryInterface;
 use App\Repositories\Contracts\TenantRepositoryInterface;
 use App\Repositories\Contracts\TenantUserRepositoryInterface;
 use App\Repositories\Eloquent\DomainRepository;
 use App\Repositories\Eloquent\FeatureRepository;
 use App\Repositories\Eloquent\PlanRepository;
+use App\Repositories\Eloquent\RoleRepository;
 use App\Repositories\Eloquent\TenantRepository;
 use App\Repositories\Eloquent\TenantUserRepository;
+use App\Services\PermissionCatalog;
 use App\Services\Tenancy\MailProvisionalPasswordNotifier;
 use App\Services\Tenancy\StanclTenantEnvironment;
 use App\Services\Tenancy\SystemDnsLookup;
@@ -46,6 +49,7 @@ final class AppServiceProvider extends ServiceProvider
         DomainRepositoryInterface::class => DomainRepository::class,
         FeatureRepositoryInterface::class => FeatureRepository::class,
         PlanRepositoryInterface::class => PlanRepository::class,
+        RoleRepositoryInterface::class => RoleRepository::class,
         TenantRepositoryInterface::class => TenantRepository::class,
         TenantUserRepositoryInterface::class => TenantUserRepository::class,
         TenantEnvironmentInterface::class => StanclTenantEnvironment::class,
@@ -58,6 +62,10 @@ final class AppServiceProvider extends ServiceProvider
         $this->app->when(TenantService::class)
             ->needs('$centralDomains')
             ->giveConfig('tenancy.central_domains', []);
+
+        $this->app->when(PermissionCatalog::class)
+            ->needs('$catalog')
+            ->giveConfig('permissions.catalog', []);
     }
 
     public function boot(): void

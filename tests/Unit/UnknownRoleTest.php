@@ -7,6 +7,7 @@ namespace Tests\Unit;
 use App\Enums\TenantUserType;
 use App\Enums\UserRole;
 use App\Models\Plan;
+use App\Models\Role;
 use App\Models\Tenant;
 use App\Models\TenantUser;
 use App\Models\User;
@@ -53,7 +54,7 @@ final class UnknownRoleTest extends TestCase
         $this->assertTrue((new PlanPolicy)->create($fromString));
     }
 
-    public function test_each_tenant_person_type_enters_only_its_own_panel(): void
+    public function test_each_tenant_person_enters_only_the_panel_of_its_role_type(): void
     {
         $panels = [
             'tenant-admin' => TenantUserType::Admin,
@@ -63,29 +64,39 @@ final class UnknownRoleTest extends TestCase
 
         foreach ($panels as $panelId => $ownType) {
             foreach (TenantUserType::cases() as $type) {
-                $person = new TenantUser(['type' => $type]);
-
                 $this->assertSame(
                     $type === $ownType,
-                    $person->canAccessPanel(Filament::getPanel($panelId)),
-                    "Tipo {$type->value} no painel {$panelId}.",
+                    $this->person($type)->canAccessPanel(Filament::getPanel($panelId)),
+                    "Perfil de tipo {$type->value} no painel {$panelId}.",
                 );
             }
         }
     }
 
-    public function test_a_tenant_person_with_an_unknown_type_enters_no_panel_and_central_users_only_the_central_one(): void
+    public function test_a_tenant_person_without_a_usable_role_or_deactivated_enters_no_panel(): void
     {
-        $person = (new TenantUser)->setRawAttributes(['type' => 'qualquer-coisa']);
+        $unknownType = (new TenantUser)->setRelation('role', (new Role)->setRawAttributes(['base_type' => 'qualquer-coisa']));
+        $noRole = (new TenantUser)->setRelation('role', null);
+        $deactivated = $this->person(TenantUserType::Admin);
+        $deactivated->is_active = false;
         $central = new User(['role' => UserRole::SuperAdmin]);
 
-        $this->assertNull($person->type);
+        $this->assertNull($unknownType->type);
 
         foreach (['tenant-admin', 'tenant-user', 'tenant-customer'] as $panelId) {
-            $this->assertFalse($person->canAccessPanel(Filament::getPanel($panelId)));
-            $this->assertFalse($central->canAccessPanel(Filament::getPanel($panelId)));
+            $panel = Filament::getPanel($panelId);
+
+            $this->assertFalse($unknownType->canAccessPanel($panel));
+            $this->assertFalse($noRole->canAccessPanel($panel));
+            $this->assertFalse($deactivated->canAccessPanel($panel));
+            $this->assertFalse($central->canAccessPanel($panel));
         }
 
         $this->assertTrue($central->canAccessPanel(Filament::getPanel('admin')));
+    }
+
+    private function person(TenantUserType $type): TenantUser
+    {
+        return (new TenantUser)->setRelation('role', new Role(['base_type' => $type]));
     }
 }
