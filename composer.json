@@ -1,10 +1,18 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "uendelsilveira/multi-tenant",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Base multi-tenant com um banco por empresa, em Laravel e Filament, para construir produtos por assinatura.",
+    "keywords": ["laravel", "filament", "multi-tenant", "multi-database", "saas", "tenancy", "asaas", "stripe"],
+    "homepage": "https://usdeveloper.com.br",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Uendel Silveira",
+            "homepage": "https://usdeveloper.com.br",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "php": "^8.3",
         "filament/filament": "^5.0",

@@ -22,7 +22,7 @@ final class CentralUserSeeder extends Seeder
         $users = [
             [
                 'name' => 'Super Admin',
-                'email' => 'admin@usdeveloper.com.br',
+                'email' => 'superadmin@central.com',
                 'password' => Hash::make('password'),
                 'role' => UserRole::SuperAdmin,
             ],

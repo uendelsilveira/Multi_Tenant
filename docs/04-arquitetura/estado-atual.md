@@ -1,6 +1,6 @@
 # Estado atual do código × documentação
 
-Retrato do repositório em 2026-10-05, na branch `main`, com as oito fatias do plano concluídas. Compara o que existe com o que foi decidido em `docs/` e com o padrão técnico (`laravel-tech-standard`, `laravel-filament-specialist`).
+Retrato do repositório na versão `v1.0.0-beta.1` (2026-10-05), com as oito fatias do plano concluídas. Compara o que existe com o que foi decidido em `docs/` e com o padrão técnico (`laravel-tech-standard`, `laravel-filament-specialist`).
 
 Este arquivo deve encolher à medida que as pendências forem resolvidas, e ser removido quando não restar nenhuma.
 
@@ -72,24 +72,23 @@ Tudo o que fala com o Asaas e com o Stripe foi escrito a partir da documentaçã
 4. **Só três tipos de evento têm efeito.** Estorno, chargeback e reativação de assinatura no gateway são gravados e ignorados.
 5. **O primeiro vencimento é fixo em relação ao cadastro** (7 dias por padrão). Não há período de teste nem data de vencimento escolhida por tenant.
 6. **Não há aviso ao tenant** sobre vencimento, carência, suspensão ou reativação por parte da plataforma. Os avisos de cobrança são os do próprio gateway.
-7. **Tenants antigos não têm assinatura.** Os criados antes desta fatia não têm registro de cobrança e não são afetados pela carência.
+7. **Tenants cadastrados antes da cobrança não têm assinatura** e não são afetados pela carência. Não afeta instalações novas.
 
 ### Plataforma
 
-8. **O comando `db:seed` está sequestrado pelo pacote de tenancy.** Nesta versão do Laravel, o comando `tenants:seed` do `stancl/tenancy` acaba registrado com o nome `db:seed`. `php artisan db:seed` tenta semear tenants em vez do banco central.
-9. **Tenants antigos estão incompletos.** Os criados antes da fatia 1 não têm documento, plano nem contato, e seus usuários continuam com a senha de desenvolvimento. Dois deles têm uma tabela `legacy_users`, da época do Jetstream, que pode ser removida.
-10. **Upload de arquivo em painel de tenant não foi tratado.** As rotas de upload e de pré-visualização do Livewire não resolvem o tenant.
-11. **"Esqueci minha senha" do tenant está habilitado, mas pouco exercitado.** A tela abre e é coberta por teste; o envio do e-mail e a troca pelo link não foram testados de ponta a ponta.
-12. **Não há como desfazer a verificação de um domínio.**
-13. **RNF02 e RNF03 não foram medidos em condição real.** Só há números de teste automatizado, sem carga.
-14. **Desativar uma pessoa não derruba a sessão dela**; a próxima requisição recebe "acesso negado".
-15. **O Redis deste projeto disputa a porta 6379** com outros projetos na mesma máquina.
-16. **Permissões não estão ligadas a funcionalidades.**
-17. **Um trait sem uso no código de produção** (`RequiresFeature`), com exceção em `phpstan.neon` até um módulo usá-lo.
-18. **Tenant sem domínio para o painel de cliente** ainda permite cadastrar cliente, que recebe um link que não serve para ele.
-19. **Usuário desativado continua responsável pelos clientes dele** até o admin trocar os responsáveis.
-20. **Cliente usa sempre o perfil de sistema Cliente**; não há tela para atribuir um perfil customizado de tipo cliente.
-21. **Não há aviso ao tenant quando ele é suspenso ou reativado manualmente.**
+8. **Ambientes criados antes da versão 1.0 podem ter tenants incompletos.** Tenants cadastrados antes da fatia 1 não têm documento, plano nem contato, e alguns têm uma tabela `legacy_users`, da época do Jetstream, que pode ser removida. Não afeta instalações novas.
+9. **Upload de arquivo em painel de tenant não foi tratado.** As rotas de upload e de pré-visualização do Livewire não resolvem o tenant.
+10. **"Esqueci minha senha" do tenant está habilitado, mas pouco exercitado.** A tela abre e é coberta por teste; o envio do e-mail e a troca pelo link não foram testados de ponta a ponta.
+11. **Não há como desfazer a verificação de um domínio.**
+12. **RNF02 e RNF03 não foram medidos em condição real.** Só há números de teste automatizado, sem carga.
+13. **Desativar uma pessoa não derruba a sessão dela**; a próxima requisição recebe "acesso negado".
+14. **O Redis deste projeto disputa a porta 6379** com outros projetos na mesma máquina.
+15. **Permissões não estão ligadas a funcionalidades.**
+16. **Um trait sem uso no código de produção** (`RequiresFeature`), com exceção em `phpstan.neon` até um módulo usá-lo.
+17. **Tenant sem domínio para o painel de cliente** ainda permite cadastrar cliente, que recebe um link que não serve para ele.
+18. **Usuário desativado continua responsável pelos clientes dele** até o admin trocar os responsáveis.
+19. **Cliente usa sempre o perfil de sistema Cliente**; não há tela para atribuir um perfil customizado de tipo cliente.
+20. **Não há aviso ao tenant quando ele é suspenso ou reativado manualmente.**
 
 ## Divergências em relação ao padrão técnico
 

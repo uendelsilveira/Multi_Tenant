@@ -1,217 +1,252 @@
-# 🚀 Projeto Base MultiTenant MultiDatabase + Filament PHP
+<div align="center">
 
-[![PHP](https://img.shields.io/badge/PHP-8.3%20%7C%208.4-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
-[![Laravel](https://img.shields.io/badge/Laravel-12%2F13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
-[![Filament](https://img.shields.io/badge/Filament-v3.2-FDAE4B?style=for-the-badge&logo=laravel&logoColor=white)](https://filamentphp.com)
-[![Stancl Tenancy](https://img.shields.io/badge/Stancl_Tenancy-v3.8-4F46E5?style=for-the-badge)](https://tenancyforlaravel.com)
-[![PHPStan](https://img.shields.io/badge/PHPStan-Level%207-4479A1?style=for-the-badge)](https://phpstan.org)
+# Multi_Tenant
+
+**Base multi-tenant com um banco por empresa, pronta para você construir o seu produto por assinatura em cima.**
+
+[![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
+[![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![Filament](https://img.shields.io/badge/Filament-5-FDAE4B?style=for-the-badge&logo=filament&logoColor=white)](https://filamentphp.com)
+[![Livewire](https://img.shields.io/badge/Livewire-4-FB70A9?style=for-the-badge&logo=livewire&logoColor=white)](https://livewire.laravel.com)
+[![Tenancy for Laravel](https://img.shields.io/badge/Tenancy_for_Laravel-3-4F46E5?style=for-the-badge)](https://tenancyforlaravel.com)
+
+[![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com)
+[![Redis](https://img.shields.io/badge/Redis-fila_e_cache-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io)
 [![Docker Sail](https://img.shields.io/badge/Docker-Sail-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://laravel.com/docs/sail)
+[![Asaas](https://img.shields.io/badge/Cobran%C3%A7a-Asaas-0030B9?style=for-the-badge)](https://www.asaas.com)
+[![Stripe](https://img.shields.io/badge/Cobran%C3%A7a-Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://stripe.com)
 
-Estrutura base completa, moderna e pronta para produção para desenvolvimento rápido de aplicações SaaS **Multi-Tenant com Bancos de Dados Isolados (Multi-Database)** utilizando **Laravel**, **Filament PHP v3**, **Stancl Tenancy v3**, e **Laravel Sail**.
+[![Testes](https://img.shields.io/badge/testes-221_passando-16A34A?style=for-the-badge)](#qualidade)
+[![Cobertura](https://img.shields.io/badge/cobertura-94%2C6%25-16A34A?style=for-the-badge)](#qualidade)
+[![PHPStan](https://img.shields.io/badge/PHPStan-n%C3%ADvel_8-4479A1?style=for-the-badge)](#qualidade)
+[![Pint](https://img.shields.io/badge/estilo-Laravel_Pint-F59E0B?style=for-the-badge)](#qualidade)
+[![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-0B132B?style=for-the-badge)](LICENSE)
+
+[![Desenvolvido por Uendel Silveira](https://img.shields.io/badge/Desenvolvido_por-Uendel_Silveira-1557FF?style=for-the-badge)](https://www.linkedin.com/in/uendelsilveira)
+[![US TECH DEVELOPER](https://img.shields.io/badge/US_TECH_DEVELOPER-usdeveloper.com.br-0B132B?style=for-the-badge)](https://usdeveloper.com.br)
+
+</div>
 
 ---
 
-## ⚡ Início Rápido (Quick Start)
+## O que é
 
-Siga os passos abaixo para colocar a aplicação rodando em poucos minutos no seu ambiente local.
+Todo produto vendido por assinatura para várias empresas começa refazendo a mesma fundação: separar os dados de cada empresa, dar a cada uma o próprio endereço, controlar quem vê o quê, definir o que cada plano inclui e cobrar por isso. Este repositório é essa fundação, pronta e testada, para você começar direto no que o seu produto tem de diferente.
 
-### 1. Clonar o Repositório e Configurar Variáveis de Ambiente
+Não é um produto final. É a base sobre a qual os módulos de negócio são construídos.
+
+## O que você recebe pronto
+
+- **Um banco de dados por empresa contratante (tenant)**, criado e migrado em fila no momento do cadastro.
+- **Resolução por domínio**: cada domínio identifica o tenant e o painel a que leva. Subdomínios e domínios próprios do cliente, com verificação manual no painel central.
+- **Quatro painéis em Filament**: o central, da operadora da plataforma, e três por tenant, um para cada tipo de pessoa: admin (`/admin`), usuário (`/app`) e cliente (`/portal`).
+- **Pessoas e perfis**: perfis de sistema fixos e perfis customizados pelo tenant, com permissões tiradas de um catálogo.
+- **Planos, ciclos e funcionalidades**: planos com preço mensal, semestral e anual; funcionalidades liberadas pelo plano e ligadas ou desligadas pelo admin do tenant.
+- **Clientes** com vínculo N:N: cada usuário vê só os clientes que atende.
+- **Primeiro acesso seguro**: senha provisória por e-mail, com validade de 24 horas e troca obrigatória.
+- **Situação do tenant**: suspensão com bloqueio total, alteração manual com motivo, trava por prazo e histórico de tudo.
+- **Cobrança recorrente** com Asaas e Stripe: assinatura criada no cadastro, webhooks, carência de 10 dias, suspensão e reativação automáticas.
+- **Isolamento também contra a operadora**: o painel central nunca lê o banco de um tenant.
+
+## Como funciona
+
+```mermaid
+flowchart LR
+    subgraph C[Central]
+        PC[Painel central]
+        WH[Webhooks de cobrança]
+        BC[(Banco central)]
+        PC --> BC
+        WH --> BC
+    end
+
+    subgraph T[Cada tenant]
+        RD[Resolução por domínio]
+        PA[Painel admin]
+        PU[Painel usuário]
+        PCL[Portal do cliente]
+        BT[(Banco do tenant)]
+        RD --> PA & PU & PCL
+        PA & PU & PCL --> BT
+    end
+
+    RD -. consulta .-> BC
+    GW[Asaas e Stripe] --> WH
+    F[Fila de jobs] -. provisiona .-> BT
+```
+
+Toda requisição a um domínio de tenant passa primeiro pela resolução, que consulta o banco central para saber de qual tenant é o domínio e para qual painel ele aponta. Só então a sessão é aberta, já no banco daquele tenant. O que não pode travar a tela roda em fila: criar o banco do tenant, criar a assinatura no gateway, enviar a senha provisória e processar os eventos de cobrança.
+
+## Início rápido
+
+Requisitos: Docker e Git. O ambiente roda em [Laravel Sail](https://laravel.com/docs/sail), com PHP 8.4, MySQL e Redis.
 
 ```bash
+git clone https://github.com/uendelsilveira/Multi_Tenant.git
+cd Multi_Tenant
 cp .env.example .env
-```
 
-### 2. Iniciar o Ambiente Docker com Laravel Sail
+# Instala as dependências sem precisar de PHP na máquina
+docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html \
+    laravelsail/php84-composer:latest composer install --ignore-platform-reqs
 
-```bash
 ./vendor/bin/sail up -d
-```
-
-### 3. Instalar Dependências PHP e Node.js
-
-```bash
-./vendor/bin/sail composer install
-./vendor/bin/sail npm install
-```
-
-### 4. Gerar Chave da Aplicação
-
-```bash
 ./vendor/bin/sail artisan key:generate
-```
-
-### 5. Executar Migrações Centrais e Seeders
-
-```bash
 ./vendor/bin/sail artisan migrate --seed
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run build
 ```
 
-### 6. Configurar Hosts Locais (Subdomínios para Tenancy)
-
-Edite o arquivo `/etc/hosts` no seu sistema operacional (ou `C:\Windows\System32\drivers\etc\hosts` no Windows) e adicione o domínio central e os subdomínios de teste apontando para `127.0.0.1`:
-
-```text
-127.0.0.1   localhost
-127.0.0.1   empresa1.localhost
-127.0.0.1   empresa2.localhost
-```
-
-### 7. Iniciar o Assets Bundler (Vite)
+Em dois terminais separados, deixe rodando a fila e o agendador. Sem a fila, nenhum tenant é provisionado; sem o agendador, a carência da cobrança não é aplicada.
 
 ```bash
-./vendor/bin/sail npm run dev
+./vendor/bin/sail artisan queue:work
+./vendor/bin/sail artisan schedule:work
 ```
 
-Pronto! A aplicação já estará disponível em:
-- **Painel Central (Admin)**: [http://localhost/admin](http://localhost/admin)
-- **Painel do Tenant**: [http://empresa1.localhost/admin](http://empresa1.localhost/admin)
+Abra `http://localhost/admin` e entre com o usuário de desenvolvimento:
 
----
+| E-mail | Senha | Papel |
+|---|---|---|
+| `admin@central.com` | `password` | Admin |
 
-## ✨ Melhorias e Funcionalidades Implementadas
+> Os usuários criados pelo seeder têm senha conhecida e servem só para desenvolvimento. Troque-os antes de publicar qualquer ambiente.
 
-### 🏢 1. Arquitetura Multi-Tenant Multi-Database (`stancl/tenancy` v3.8)
-- **Isolamento Total por Banco de Dados**: Cada inquilino (tenant) possui seu próprio banco de dados MySQL criado e gerenciado automaticamente na criação da conta.
-- **Resolução de Tenancy por Subdomínio**: Identificação dinâmica do tenant através do middleware `InitializeTenancyBySubdomain`.
-- **Proteção de Domínios Centrais**: Utilização de `PreventAccessFromCentralDomains` para garantir que rotas de tenant não vazem para o painel central.
-- **Separação Estruturada de Migrações e Rotas**:
-  - Migrações centrais em `database/migrations/`
-  - Migrações isoladas do tenant em `database/migrations/tenant/`
-  - Rotas de tenants isoladas em `routes/tenant.php`
+### Seu primeiro tenant
 
-### 🎨 2. Painéis Duplos no Filament PHP v3.2
-- **Painel Central (`AdminPanelProvider`)**:
-  - Acessível em `localhost/admin`.
-  - Destinado à administração global da plataforma, cadastro de tenants, domínios e assinaturas.
-  - Esquema de cores: **Primary Blue**.
-- **Painel do Tenant (`TenantPanelProvider`)**:
-  - Acessível em `{subdominio}.localhost/admin`.
-  - Destinado à operação interna de cada empresa/tenant.
-  - Integrado nativamente aos middlewares de tenancy do Stancl.
-  - Esquema de cores: **Primary Amber**.
+1. **Planos → Novo.** Dê um nome e um preço para pelo menos um ciclo.
+2. **Tenants → Novo.** Preencha o slug, os dados da empresa, o plano, o ciclo e o gateway. Em Domínios, informe `acme.localhost` apontando para o painel Admin. Endereços `*.localhost` resolvem para a sua máquina sem configuração.
+3. **Aguarde o ambiente ficar "Pronto"** na listagem. É a fila criando o banco do tenant.
+4. **Domínios → Marcar como verificado.** Todo domínio nasce pendente e só responde depois disso.
+5. **Pegue a senha provisória.** Em desenvolvimento o e-mail é gravado em `storage/logs/laravel.log`.
+6. **Abra `http://acme.localhost/admin`**, entre com o e-mail de contato do tenant e a senha provisória, e defina a senha definitiva.
 
-### 👥 3. Gestão de Usuários e Perfis de Acesso (RBAC NATIVO)
-- Enum nativo PHP `UserRole` (`App\Enums\UserRole`):
-  - `SuperAdmin` (`super_admin`)
-  - `Admin` (`admin`)
-  - `Manager` (`manager`)
-  - `Operator` (`operator`)
-- Separação entre Usuários Centrais (`App\Models\User`) e Usuários de Tenants (`App\Models\TenantUser`).
-- Seeders automatizados e padronizados para preenchimento de dados de teste.
+Sem as credenciais dos gateways no `.env`, a assinatura do tenant aparece como "Falhou ao criar". Isso não impede o uso: é só a cobrança que não foi criada.
 
-### 🛡️ 4. Qualidade de Código & Análise Estática Nível 7 (PHPStan / Larastan)
-- Análise estática de código configurada no **Nível 7 (Level 7)** via `phpstan.neon`.
-- Integração perfeita com `larastan/larastan` para prevenção contínua de erros de tipagem e runtime bugs em tempo de desenvolvimento.
+## Como começar o seu produto a partir desta base
 
-### 🐳 5. Ambiente Containerizado com Laravel Sail
-- Suporte a Docker out-of-the-box via Laravel Sail.
-- Serviços integrados: **PHP 8.4 / 8.3**, **MySQL 8.0** e **Redis alpine**.
-- Execução padronizada e segura usando `./vendor/bin/sail`.
+1. **Crie o seu repositório a partir deste**, com "Use this template" no GitHub ou com um fork.
+2. **Ajuste a identidade**: `APP_NAME` no `.env`, o nome do pacote em `composer.json` e as cores dos painéis em `app/Providers/Filament`.
+3. **Leia o glossário** em [`CONTEXT.md`](CONTEXT.md). Os nomes do código vêm dele: tenant, painel, perfil, tipo base, funcionalidade, plano.
+4. **Construa o seu primeiro módulo** seguindo o guia [`docs/05-guia/criando-um-modulo.md`](docs/05-guia/criando-um-modulo.md). Em resumo:
+   - declare a funcionalidade em `config/features.php` e rode `sail artisan features:sync`;
+   - declare as permissões em `config/permissions.php`;
+   - crie as tabelas em `database/migrations/tenant`;
+   - escreva o caso de uso em camadas e as telas no painel certo, em `app/Filament/Tenant/{Admin,User,Customer}`.
+5. **Valide a cobrança em sandbox** antes de cobrar alguém. Veja [Estado e limites](#estado-e-limites).
 
----
+## Estrutura
 
-## 🔑 Credenciais Padrão (Seeders)
+```
+app/
+├── Actions/            Casos de uso. Orquestram, emitem eventos, não têm regra
+├── Services/           Regras de negócio
+│   ├── Billing/        Gateways de cobrança (Asaas, Stripe)
+│   └── Tenancy/        Infraestrutura do ambiente do tenant
+├── Repositories/       Acesso a dados, sempre atrás de interface
+├── DTOs/               Dados que cruzam as camadas
+├── Exceptions/         Violações de regra, com mensagem para o usuário
+├── Events/ Listeners/ Jobs/    Tudo o que roda em segundo plano
+├── Policies/           Quem pode o quê
+├── Http/Middleware/    Resolução de domínio, provisionamento, suspensão, funcionalidade
+└── Filament/
+    ├── Resources/      Painel central
+    └── Tenant/
+        ├── Admin/      Painel admin do tenant
+        ├── User/       Painel do usuário
+        └── Shared/     Peças usadas por mais de um painel
 
-Todos os usuários abaixo são gerados automaticamente com a senha padrão: **`password`**
+config/
+├── features.php        Catálogo de funcionalidades
+├── permissions.php     Catálogo de permissões
+└── billing.php         Carência, vencimento e credenciais dos gateways
 
-### 🏢 Painel Central (`http://localhost/admin`)
-| Nome | E-mail | Role |
-| :--- | :--- | :--- |
-| **Super Admin** | `admin@usdeveloper.com.br` | `SuperAdmin` |
-| **Central Admin** | `admin@central.com` | `Admin` |
-| **Central Manager** | `manager@central.com` | `Manager` |
-| **Central Operator** | `operator@central.com` | `Operator` |
+database/migrations/            Banco central
+database/migrations/tenant/     Banco de cada tenant
 
-### 🏬 Painel do Tenant (`http://{tenant}.localhost/admin`)
-| Nome | E-mail | Role |
-| :--- | :--- | :--- |
-| **Super Admin** | `admin@usdeveloper.com.br` | `SuperAdmin` |
-| **Tenant Admin** | `admin@tenant.com` | `Admin` |
-| **Tenant Manager** | `manager@tenant.com` | `Manager` |
-| **Tenant Operator** | `operator@tenant.com` | `Operator` |
+docs/                   Requisitos, modelagem, arquitetura, decisões e guias
+CONTEXT.md              Glossário do domínio
+```
 
----
+O fluxo de qualquer caso de uso é o mesmo: a tela monta um DTO e chama uma Action; a Action chama o Service, onde mora a regra; o Service fala com Repositories. Telas do Filament não têm regra de negócio nem consultam o banco por conta própria.
 
-## 🛠️ Comandos Úteis de Desenvolvimento
+## Qualidade
 
-Todos os comandos devem ser executados via **Sail**:
-
-### Gerenciamento do Ambiente Docker
 ```bash
-# Subir os containers em background
-./vendor/bin/sail up -d
-
-# Parar os containers
-./vendor/bin/sail down
+./vendor/bin/sail artisan test                 # 221 testes
+./vendor/bin/sail artisan test --coverage      # 94,6% de cobertura
+./vendor/bin/sail composer phpstan             # nível 8, sem erros
+./vendor/bin/sail pint                         # estilo, com strict_types e classes final
 ```
 
-### Banco de Dados & Tenancy
-```bash
-# Executar migrações do banco central
-./vendor/bin/sail artisan migrate
+Parte dos testes cria bancos de tenant de verdade no MySQL e os remove no fim. Eles estão no grupo `real-database`; para rodar só os demais, use `--exclude-group=real-database`.
 
-# Executar migrações em TODOS os bancos de dados de tenants
-./vendor/bin/sail artisan tenancy:migrate
+Os números dos selos no topo são os medidos na versão `v1.0.0-beta.1`.
 
-# Executar seeders em TODOS os bancos de dados de tenants
-./vendor/bin/sail artisan tenancy:db:seed
-```
+## Produção
 
-### Qualidade de Código & Testes
-```bash
-# Executar análise estática do PHPStan (Level 7)
-./vendor/bin/sail composer phpstan
+O que precisa existir no ambiente, além da aplicação:
 
-# Executar a suíte de testes automatizados
-./vendor/bin/sail artisan test
+| Item | Por quê |
+|---|---|
+| Worker de fila (`queue:work` sob supervisor, ou Horizon) | Provisionamento, senhas provisórias, assinaturas e webhooks |
+| Agendador (`schedule:run` no cron, a cada minuto) | Carência da cobrança |
+| Serviço de e-mail configurado | As senhas provisórias saem por e-mail |
+| Credenciais dos gateways no `.env` | `ASAAS_API_KEY`, `ASAAS_WEBHOOK_TOKEN`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET` |
+| URL pública para `/webhooks/asaas` e `/webhooks/stripe` | Os gateways avisam pagamentos e vencimentos por ali |
+| Certificado para os domínios dos tenants | Domínios próprios são cadastrados a qualquer momento |
+| Driver de cache com suporte a tags (Redis) | O cache é separado por tenant |
 
-# Formatação de código com Laravel Pint
-./vendor/bin/sail composer exec pint
-```
+O passo a passo de implantação e as rotinas de operação estão em [`docs/06-entrega/runbook.md`](docs/06-entrega/runbook.md).
 
----
+## Documentação
 
-## 📂 Estrutura de Arquivos Relevantes
+| Onde | O que tem |
+|---|---|
+| [`CONTEXT.md`](CONTEXT.md) | Glossário, relações entre os conceitos e o mapa de cada ação até a classe que a executa |
+| [`docs/01-problema`](docs/01-problema) | O problema que a base resolve e o que está fora do escopo |
+| [`docs/02-requisitos`](docs/02-requisitos) | Requisitos funcionais, regras de negócio, requisitos não funcionais e a matriz de rastreabilidade até os testes |
+| [`docs/03-modelagem`](docs/03-modelagem) | Diagrama dos dois bancos e ciclos de vida |
+| [`docs/04-arquitetura`](docs/04-arquitetura) | Fluxos, respostas aos requisitos não funcionais e o estado atual |
+| [`docs/05-guia`](docs/05-guia) | Como criar um módulo sobre a base |
+| [`docs/06-entrega`](docs/06-entrega) | Runbook de implantação e operação |
+| [`docs/adr`](docs/adr) | As dez decisões de arquitetura, com as alternativas descartadas |
+| [`CHANGELOG.md`](CHANGELOG.md) | O que cada versão trouxe |
 
-```text
-.
-├── app/
-│   ├── Enums/
-│   │   └── UserRole.php              # Enum de perfis de usuário (SuperAdmin, Admin, Manager, Operator)
-│   ├── Models/
-│   │   ├── Tenant.php                # Model principal do Tenant
-│   │   ├── Domain.php                # Model de subdomínios do Tenant
-│   │   ├── User.php                  # Model de usuários centrais
-│   │   └── TenantUser.php            # Model de usuários do tenant
-│   └── Providers/
-│       └── Filament/
-│           ├── AdminPanelProvider.php  # Configuração do Painel Central
-│           └── TenantPanelProvider.php # Configuração do Painel do Tenant
-├── config/
-│   └── tenancy.php                   # Configuração principal da tenancy multi-database
-├── database/
-│   ├── migrations/                   # Migrações do banco central
-│   │   └── tenant/                   # Migrações executadas em cada banco de tenant
-│   └── seeders/
-│       ├── CentralUserSeeder.php     # Seeder de usuários centrais
-│       ├── TenantUserSeeder.php      # Seeder de usuários do tenant
-│       └── DatabaseSeeder.php
-├── routes/
-│   ├── web.php                       # Rotas centrais
-│   └── tenant.php                    # Rotas dos tenants (subdomínio)
-├── compose.yml                       # Definição do Docker Sail (PHP, MySQL, Redis)
-└── phpstan.neon                      # Configuração do PHPStan no Nível 7
-```
+## Estado e limites
 
----
+A versão atual é a `v1.0.0-beta.1`. As oito fatias planejadas estão implementadas e cobertas por testes. É "beta" por um motivo específico:
 
-## 👨‍💻 Autor
+- **A cobrança não foi testada contra o Asaas nem contra o Stripe de verdade.** As integrações foram escritas a partir da documentação pública dos dois e testadas contra respostas simuladas. Antes de cobrar alguém, rode o roteiro de validação em sandbox descrito em [`docs/04-arquitetura/estado-atual.md`](docs/04-arquitetura/estado-atual.md).
 
-Desenvolvido por **Uendel Silveira**  
-*Developer Web*
+Outros limites que vale conhecer antes de começar:
 
----
+- Não há módulos de negócio. O catálogo de funcionalidades vem vazio, e o portal do cliente abre sem conteúdo.
+- A emissão automática de certificado para domínios próprios não está configurada.
+- Excluir um tenant não cancela a assinatura dele no gateway.
+- Upload de arquivo em painel de tenant precisa de um ajuste na rota do Livewire, ainda não feito.
 
-## 📜 Licença
+A lista completa, com 20 itens, está em [`estado-atual.md`](docs/04-arquitetura/estado-atual.md).
 
-Este projeto é um software de código aberto licenciado sob a [MIT License](https://opensource.org/licenses/MIT).
+## Licença
+
+Distribuído sob a licença [MIT](LICENSE). Você pode usar, modificar e distribuir, inclusive em projetos comerciais, mantendo o aviso de copyright.
+
+## Autor
+
+<div align="center">
+
+**Uendel Silveira**
+Desenvolvedor web · PHP e Laravel
+
+**US TECH DEVELOPER**
+*Tecnologia que conecta. Soluções que transformam.*
+
+[![Site](https://img.shields.io/badge/usdeveloper.com.br-1557FF?style=for-the-badge&logo=googlechrome&logoColor=white)](https://usdeveloper.com.br)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-uendelsilveira-0A66C2?style=for-the-badge)](https://www.linkedin.com/in/uendelsilveira)
+[![GitHub](https://img.shields.io/badge/GitHub-uendelsilveira-0B132B?style=for-the-badge&logo=github&logoColor=white)](https://github.com/uendelsilveira)
+[![E-mail](https://img.shields.io/badge/contato%40usdeveloper.com.br-1E293B?style=for-the-badge)](mailto:contato@usdeveloper.com.br)
+
+Precisa de um sistema sob medida ou de ajuda para construir o seu produto sobre esta base? [Fale com a US Developer](https://usdeveloper.com.br).
+
+</div>
