@@ -58,9 +58,10 @@ final class User extends Authenticatable implements FilamentUser
         );
     }
 
+    /** Usuário central só entra no painel central. */
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return $panel->getId() === 'admin';
     }
 
     public function isSuperAdmin(): bool

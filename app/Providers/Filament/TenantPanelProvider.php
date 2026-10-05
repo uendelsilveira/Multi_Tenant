@@ -1,58 +1,77 @@
 <?php
 
 declare(strict_types=1);
-/*
- By Uendel Silveira
- Developer Web
- IDE: PhpStorm
- Created: 29/07/2026 20:05
-*/
 
 namespace App\Providers\Filament;
 
+use App\Enums\DomainPanel;
+use App\Filament\Tenant\Pages\ChangeProvisionalPassword;
 use App\Http\Middleware\EnforceProvisionalPasswordChange;
+use App\Http\Middleware\EnsureDomainMatchesPanel;
 use App\Http\Middleware\EnsureTenantIsProvisioned;
+use App\Http\Middleware\InitializeTenancyForTenantDomain;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
+use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
-use Filament\Widgets;
+use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
-final class TenantPanelProvider extends PanelProvider
+/**
+ * Base dos três painéis de tenant (ADR-0002, ADR-0008). Cada painel tem seu
+ * caminho e só responde no domínio que aponta para ele. Os três usam o mesmo
+ * guard; quem decide a entrada é o tipo base da pessoa.
+ */
+abstract class TenantPanelProvider extends PanelProvider
 {
+    abstract protected function domainPanel(): DomainPanel;
+
+    /** Pasta em app/Filament/Tenant onde ficam resources, páginas e widgets do painel. */
+    abstract protected function directory(): string;
+
+    /** @return array<int|string, string> */
+    abstract protected function primaryColor(): array;
+
     public function panel(Panel $panel): Panel
     {
+        $domainPanel = $this->domainPanel();
+        $directory = $this->directory();
+        $namespace = "App\\Filament\\Tenant\\{$directory}";
+
         return $panel
-            ->id('tenant')
-            ->path('admin')
+            ->id($domainPanel->panelId())
+            ->path($domainPanel->path())
             ->login()
             ->passwordReset()
+            ->authGuard('tenant')
+            ->authPasswordBroker('tenant_users')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => $this->primaryColor(),
             ])
-            ->discoverResources(in: app_path('Filament/Tenant/Resources'), for: 'App\\Filament\\Tenant\\Resources')
-            ->discoverPages(in: app_path('Filament/Tenant/Pages'), for: 'App\\Filament\\Tenant\\Pages')
+            ->discoverResources(in: app_path("Filament/Tenant/{$directory}/Resources"), for: "{$namespace}\\Resources")
+            ->discoverPages(in: app_path("Filament/Tenant/{$directory}/Pages"), for: "{$namespace}\\Pages")
+            ->discoverWidgets(in: app_path("Filament/Tenant/{$directory}/Widgets"), for: "{$namespace}\\Widgets")
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
+                ChangeProvisionalPassword::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Tenant/Widgets'), for: 'App\\Filament\\Tenant\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                AccountWidget::class,
             ])
             ->middleware([
+                InitializeTenancyForTenantDomain::class,
+                PreventAccessFromCentralDomains::class,
+                EnsureTenantIsProvisioned::class,
+                EnsureDomainMatchesPanel::class.':'.$domainPanel->value,
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
@@ -62,9 +81,6 @@ final class TenantPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                InitializeTenancyByDomain::class,
-                PreventAccessFromCentralDomains::class,
-                EnsureTenantIsProvisioned::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

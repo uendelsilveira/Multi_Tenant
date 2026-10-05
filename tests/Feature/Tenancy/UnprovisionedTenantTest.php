@@ -10,6 +10,7 @@ use App\Enums\BillingCycle;
 use App\Repositories\Contracts\PlanRepositoryInterface;
 use App\Repositories\Contracts\TenantRepositoryInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Tests\Support\TenantData;
 use Tests\TestCase;
 
@@ -29,12 +30,17 @@ final class UnprovisionedTenantTest extends TestCase
 
     public function test_a_tenant_that_is_not_ready_shows_the_waiting_page(): void
     {
+        Queue::fake();
+
         $planId = app(PlanRepositoryInterface::class)->create(new CreatePlanDTO('Profissional', null, true, [
             new PlanPriceDTO(BillingCycle::Monthly, '99.90'),
         ], []))->id;
 
         // Cadastrado, mas sem provisionamento: o banco dele ainda não existe.
-        app(TenantRepositoryInterface::class)->create(TenantData::create(planId: $planId));
+        $tenant = app(TenantRepositoryInterface::class)->create(TenantData::create(planId: $planId));
+
+        // Domínio já verificado: o que falta é só o ambiente.
+        $tenant->domains()->update(['status' => 'active']);
 
         $this->get('http://painel.acme.test/admin/login')
             ->assertStatus(503)

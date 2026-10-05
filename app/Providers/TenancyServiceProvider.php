@@ -12,8 +12,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Http\Middleware\EnsureTenantIsProvisioned;
-use App\Models\TenantUser;
-use App\Models\User;
+use App\Http\Middleware\InitializeTenancyForTenantDomain;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -70,17 +69,11 @@ final class TenancyServiceProvider extends ServiceProvider
             Events\InitializingTenancy::class => [],
             Events\TenancyInitialized::class => [
                 Listeners\BootstrapTenancy::class,
-                function () {
-                    config(['auth.providers.users.model' => TenantUser::class]);
-                },
             ],
 
             Events\EndingTenancy::class => [],
             Events\TenancyEnded::class => [
                 Listeners\RevertToCentralContext::class,
-                function () {
-                    config(['auth.providers.users.model' => User::class]);
-                },
             ],
 
             Events\BootstrappingTenancy::class => [],
@@ -150,7 +143,9 @@ final class TenancyServiceProvider extends ServiceProvider
                 Middleware\InitializeTenancyByPath::class,
                 Middleware\InitializeTenancyByRequestData::class,
 
-                // Logo depois de identificar o tenant e antes da sessão, que já usa o banco dele.
+                // Resolução própria por domínio verificado, e a espera pelo provisionamento:
+                // logo depois de identificar o tenant e antes da sessão, que já usa o banco dele.
+                InitializeTenancyForTenantDomain::class,
                 EnsureTenantIsProvisioned::class,
             ];
 

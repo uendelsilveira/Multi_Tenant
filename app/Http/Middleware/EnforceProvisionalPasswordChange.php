@@ -28,7 +28,7 @@ final class EnforceProvisionalPasswordChange
     public function handle(Request $request, Closure $next): Response
     {
         /** @var Authenticatable|null $user */
-        $user = $request->user();
+        $user = Filament::auth()->user();
 
         if (! $user instanceof TenantUser || ! $this->users->mustChangePassword($user)) {
             return $next($request);

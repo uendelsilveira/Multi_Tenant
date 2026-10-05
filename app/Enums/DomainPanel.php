@@ -19,6 +19,22 @@ enum DomainPanel: string
         };
     }
 
+    /** Identificador do painel no Filament. */
+    public function panelId(): string
+    {
+        return 'tenant-'.$this->value;
+    }
+
+    /** Caminho do painel dentro do domínio que aponta para ele (ADR-0008). */
+    public function path(): string
+    {
+        return match ($this) {
+            self::Admin => 'admin',
+            self::User => 'app',
+            self::Customer => 'portal',
+        };
+    }
+
     /** @return array<string, string> */
     public static function options(): array
     {

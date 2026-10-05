@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent;
 
-use App\Enums\UserRole;
+use App\Enums\TenantUserType;
 use App\Models\TenantUser;
 use App\Repositories\Contracts\TenantUserRepositoryInterface;
 use Carbon\CarbonInterface;
@@ -15,7 +15,7 @@ final class TenantUserRepository implements TenantUserRepositoryInterface
     public function findInitialAdmin(): ?TenantUser
     {
         return TenantUser::query()
-            ->where('role', UserRole::Admin->value)
+            ->where('type', TenantUserType::Admin->value)
             ->orderBy('id')
             ->first();
     }
@@ -31,7 +31,7 @@ final class TenantUserRepository implements TenantUserRepositoryInterface
             'name' => $name,
             'email' => $email,
             'password' => $plainPassword,
-            'role' => UserRole::Admin->value,
+            'type' => TenantUserType::Admin->value,
             'must_change_password' => true,
             'password_expires_at' => $expiresAt,
         ]);

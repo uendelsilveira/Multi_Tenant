@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\DomainPanel;
 use App\Enums\DomainStatus;
+use Illuminate\Support\Carbon;
 use Stancl\Tenancy\Database\Models\Domain as BaseDomain;
 
 /**
@@ -14,6 +15,8 @@ use Stancl\Tenancy\Database\Models\Domain as BaseDomain;
  * @property string $tenant_id
  * @property DomainPanel $panel
  * @property DomainStatus $status
+ * @property Carbon|null $verified_at
+ * @property int|null $verified_by
  */
 final class Domain extends BaseDomain
 {
@@ -23,6 +26,7 @@ final class Domain extends BaseDomain
         return [
             'panel' => DomainPanel::class,
             'status' => DomainStatus::class,
+            'verified_at' => 'datetime',
         ];
     }
 }

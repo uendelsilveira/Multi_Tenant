@@ -10,12 +10,16 @@ declare(strict_types=1);
 
 use App\Providers\AppServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
-use App\Providers\Filament\TenantPanelProvider;
+use App\Providers\Filament\TenantAdminPanelProvider;
+use App\Providers\Filament\TenantCustomerPanelProvider;
+use App\Providers\Filament\TenantUserPanelProvider;
 use App\Providers\TenancyServiceProvider;
 
 return [
     AppServiceProvider::class,
     AdminPanelProvider::class,
-    TenantPanelProvider::class,
+    TenantAdminPanelProvider::class,
+    TenantUserPanelProvider::class,
+    TenantCustomerPanelProvider::class,
     TenancyServiceProvider::class,
 ];

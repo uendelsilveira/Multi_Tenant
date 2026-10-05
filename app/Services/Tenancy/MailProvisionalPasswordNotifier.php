@@ -32,6 +32,8 @@ final class MailProvisionalPasswordNotifier implements ProvisionalPasswordNotifi
         $scheme = parse_url((string) config('app.url'), PHP_URL_SCHEME) ?: 'https';
         $host = $domain !== null ? $domain->domain : $tenant->id;
 
-        return "{$scheme}://{$host}/admin/login";
+        $path = ($domain !== null ? $domain->panel : DomainPanel::Admin)->path();
+
+        return "{$scheme}://{$host}/{$path}/login";
     }
 }

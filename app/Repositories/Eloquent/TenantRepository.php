@@ -115,7 +115,8 @@ final class TenantRepository implements TenantRepositoryInterface
     {
         $hosts = array_map(fn (TenantDomainDTO $domain): string => $domain->host, $domains);
 
-        $tenant->domains()->whereNotIn('domain', $hosts)->delete();
+        // Um a um, pelo model: é o que dispara a limpeza do cache de resolução.
+        $tenant->domains()->whereNotIn('domain', $hosts)->get()->each->delete();
 
         foreach ($domains as $domain) {
             /** @var Domain|null $existing */

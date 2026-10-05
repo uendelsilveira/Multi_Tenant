@@ -9,30 +9,32 @@
 
 declare(strict_types=1);
 
+use App\Enums\DomainPanel;
 use App\Http\Middleware\EnsureTenantIsProvisioned;
+use App\Http\Middleware\InitializeTenancyForTenantDomain;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 /*
 |--------------------------------------------------------------------------
-| Tenant Routes
+| Rotas de tenant
 |--------------------------------------------------------------------------
 |
-| Here you can register the tenant routes for your application.
-| These routes are loaded by the TenantRouteServiceProvider.
-|
-| Feel free to customize them however you want. Good luck!
+| As telas ficam nos painéis do Filament. Aqui só a raiz do domínio, que
+| leva ao painel para o qual aquele domínio aponta.
 |
 */
 
 Route::middleware([
     'web',
-    InitializeTenancyByDomain::class,
+    InitializeTenancyForTenantDomain::class,
     PreventAccessFromCentralDomains::class,
     EnsureTenantIsProvisioned::class,
 ])->group(function () {
-    Route::get('/', function () {
-        return redirect('/admin');
+    Route::get('/', function (Request $request) {
+        $panel = $request->attributes->get(InitializeTenancyForTenantDomain::PANEL_ATTRIBUTE);
+
+        return redirect('/'.($panel instanceof DomainPanel ? $panel->path() : DomainPanel::Admin->path()));
     });
 });
