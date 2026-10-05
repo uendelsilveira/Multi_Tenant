@@ -95,8 +95,8 @@ Mapa de eventos (conferir nomes na documentação vigente de cada gateway antes 
 | Evento interno | Asaas | Stripe |
 |---|---|---|
 | PaymentConfirmed | `PAYMENT_CONFIRMED`, `PAYMENT_RECEIVED` | `invoice.paid` |
-| PaymentOverdue | `PAYMENT_OVERDUE` | `invoice.payment_failed` |
-| SubscriptionCanceled | `SUBSCRIPTION_DELETED` | `customer.subscription.deleted` |
+| PaymentOverdue | `PAYMENT_OVERDUE` | `invoice.overdue`, `invoice.payment_failed` |
+| SubscriptionCanceled | `SUBSCRIPTION_DELETED`, `SUBSCRIPTION_INACTIVATED` | `customer.subscription.deleted` |
 
 ## Resposta arquitetural a cada RNF
 
@@ -107,7 +107,7 @@ Mapa de eventos (conferir nomes na documentação vigente de cada gateway antes 
 | RNF01 Isolamento | Banco por tenant; conexão trocada em tempo de execução; models centrais não leem tabelas de tenant; cache com tag `tenant-{id}`; todo job de tenant inicializa tenancy no `handle()` |
 | RNF02 Resolução | Consulta a `domains` em cache, invalidado ao criar, verificar ou remover domínio |
 | RNF03 Provisionamento | Job assíncrono em fila dedicada; migrations de tenant em diretório próprio |
-| RNF04 Webhook | Endpoint só valida, grava, emite evento e responde; o Listener enfileira o job de processamento |
+| RNF04 Webhook | O endpoint só confere a origem, grava, emite o evento e responde; o Listener enfileira o job de processamento. A rota não usa sessão nem cookies |
 | RNF05 Propagação | Não há cache nas funcionalidades: o plano do tenant é relido do banco central a cada requisição ou job, e reaproveitado só dentro dela. A troca de plano e a edição de um plano valem na requisição seguinte |
 | RNF06 Auditoria | `TenantStatusService` é o único ponto que muda `tenants.status`, e o repositório grava a situação e o histórico na mesma transação |
 | RNF07 Qualidade | Pipeline de CI com cobertura, PHPStan nível 8 e Pint |

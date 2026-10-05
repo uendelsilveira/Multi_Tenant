@@ -1,8 +1,8 @@
 # Estado atual do código × documentação
 
-Retrato do repositório em 2026-10-04, na branch `main`, depois da fatia 7. Compara o que existe com o que foi decidido em `docs/` e com o padrão técnico (`laravel-tech-standard`, `laravel-filament-specialist`).
+Retrato do repositório em 2026-10-05, na branch `main`, com as oito fatias do plano concluídas. Compara o que existe com o que foi decidido em `docs/` e com o padrão técnico (`laravel-tech-standard`, `laravel-filament-specialist`).
 
-Quando as divergências forem resolvidas, este arquivo deve ser removido, não mantido.
+Este arquivo deve encolher à medida que as pendências forem resolvidas, e ser removido quando não restar nenhuma.
 
 ## Branches
 
@@ -20,58 +20,90 @@ Quando as divergências forem resolvidas, este arquivo deve ser removido, não m
 | 4 | Pessoas e perfis (RF12, RF13, RF26) | Concluída |
 | 5 | Funcionalidades: liga/desliga e troca de plano (RF05, RF14, RF15, RF20) | Concluída |
 | 6 | Clientes e vínculo N:N (RF16, RF17) | Concluída |
-| 7 | Situação manual, bloqueio na suspensão e histórico (RF06, RF07, RF19) | **Concluída** |
-| 8 | Cobrança automática (RF18) | Pendente |
+| 7 | Situação manual, bloqueio na suspensão e histórico (RF06, RF07, RF19) | Concluída |
+| 8 | Cobrança automática (RF18, RF27, RF28, RF29, RF30) | **Concluída, sem teste contra os gateways reais** |
 
-## O que a fatia 7 entregou
+## O que a fatia 8 entregou
 
-- Ação **Alterar situação** na listagem de tenants do central, com motivo obrigatório e trava opcional por prazo.
-- Histórico de situação na edição do tenant, com origem, autor, motivo e trava.
-- Tenant suspenso bloqueado por inteiro, com página que pede contato com o administrador (ADR-0010). Vale também para quem já estava com a tela aberta.
-- Ponto único de alteração da situação (`TenantStatusService`), já com o caminho que a cobrança automática vai usar e o respeito à trava.
-- Middleware de job para os módulos não processarem nada de um tenant suspenso.
+- Escolha do gateway (Asaas ou Stripe) no cadastro do tenant, e criação do pagador e da assinatura nele, em fila.
+- Recebimento de webhooks dos dois gateways em `/webhooks/asaas` e `/webhooks/stripe`, com conferência de origem própria de cada um, gravação antes do processamento e garantia de efeito único.
+- Carência de 10 dias: um comando agendado suspende quem passou do prazo. Pagamento confirmado reativa. Cancelamento suspende na hora.
+- Respeito à trava manual do central em todos esses caminhos.
+- Ajuste das próximas cobranças quando o plano ou o ciclo do tenant muda.
+- No central: situação da cobrança na listagem de tenants, nova tentativa de criação da assinatura e listagem dos eventos recebidos.
 
-## Para rodar em desenvolvimento
+## A cobrança não foi testada contra os gateways reais
 
-- **A fila precisa de um worker.** O provisionamento só acontece com `php artisan queue:work` rodando (ou `composer dev`). Sem worker, o tenant fica em "Aguardando".
-- **O e-mail vai para o log.** Com `MAIL_MAILER=log`, a mensagem com a senha provisória é gravada em `storage/logs/laravel.log`. Em produção, um mailer real precisa estar configurado.
-- **Todo domínio novo precisa ser verificado.** Um tenant recém-cadastrado só abre depois que o domínio dele é marcado como verificado em Domínios, no painel central. O e-mail com a senha provisória sai antes disso; se o admin clicar no link com o domínio ainda pendente, verá "não encontrado".
+Tudo o que fala com o Asaas e com o Stripe foi escrito a partir da documentação pública deles e testado contra respostas simuladas. **Nenhuma chamada foi feita a um gateway de verdade**, porque não há credenciais neste ambiente. Antes de usar com dinheiro real é preciso, em sandbox de cada gateway:
+
+1. Cadastrar um tenant e conferir que o pagador e a assinatura aparecem no painel do gateway, com valor, ciclo e primeiro vencimento certos.
+2. Cadastrar a URL do webhook e conferir que um evento real é aceito, gravado e aplicado.
+3. Conferir os nomes dos eventos e o formato do corpo. Os pontos de maior risco de divergência:
+   - No Asaas, a alteração de assinatura foi implementada como `PUT /subscriptions/{id}`; a documentação já descreveu essa operação também como `POST`.
+   - No Stripe, a assinatura é criada com envio de fatura por e-mail (`collection_method=send_invoice`), sem cartão guardado. O evento de vencimento usado é `invoice.overdue`, cujo momento de disparo depende de configuração na conta.
+   - No Stripe, a assinatura de uma fatura é localizada pelo pagador, porque o campo que liga a fatura à assinatura mudou de lugar entre versões da API.
+
+## Para rodar
+
+- **Variáveis de ambiente da cobrança:** `ASAAS_API_KEY`, `ASAAS_WEBHOOK_TOKEN`, `ASAAS_BASE_URL` (o padrão é o sandbox), `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`. Opcionais: `BILLING_GRACE_DAYS` (10), `BILLING_FIRST_DUE_IN_DAYS` (7), `ASAAS_BILLING_TYPE` (`UNDEFINED`, em que o pagador escolhe a forma). Sem as credenciais de um gateway, a assinatura dos tenants dele fica como "Falhou ao criar", com o motivo, e pode ser tentada de novo depois.
+- **O agendador precisa rodar.** A carência é aplicada pelo comando `billing:enforce-grace`, agendado de hora em hora. Sem `php artisan schedule:run` no cron (ou `schedule:work` em desenvolvimento), ninguém é suspenso por falta de pagamento.
+- **A fila precisa de um worker.** Provisionamento, senhas provisórias, criação de assinatura e processamento de webhooks rodam em fila.
+- **O e-mail vai para o log** em desenvolvimento (`MAIL_MAILER=log`). Em produção, um mailer real precisa estar configurado.
+- **Todo domínio novo precisa ser verificado** no painel central antes de responder.
+- **O webhook precisa ser alcançável pelo gateway.** Em desenvolvimento isso exige um túnel para a máquina local.
 
 ## Divergências que continuam
 
 | Tema | Documentado | Código hoje |
 |---|---|---|
-| Cobrança | `subscriptions`, `webhook_events`, `tenant_status_logs` | Não existem |
 | Conteúdo do portal do cliente | Telas do cliente | O cliente entra no portal e vê só o painel de controle padrão. O que ele faz ali depende dos módulos |
-| Catálogo de permissões | Permissões dos módulos | Só as duas da plataforma; os módulos ainda não existem |
-| Funcionalidades em uso | Módulos que respeitam liga/desliga (RF15) | O mecanismo existe e é testado com um módulo fictício. Nenhum módulo real existe ainda, então o catálogo em `config/features.php` está vazio e a tela de funcionalidades aparece sem itens |
+| Funcionalidades em uso | Módulos que respeitam liga/desliga (RF15) | O mecanismo existe e é testado com um módulo fictício. Nenhum módulo real existe ainda, então o catálogo em `config/features.php` está vazio |
+| Catálogo de permissões | Permissões dos módulos | Só as da plataforma; os módulos ainda não existem |
 | Certificado para domínio próprio | Emissão automática sob demanda | Não configurado. Em desenvolvimento tudo roda em HTTP |
+| Perfis de sistema no provisionamento | Semeados junto com o admin (RF11) | São criados pela migration do tenant, não pelo provisionamento; o efeito é o mesmo |
 
 ## Problemas conhecidos
 
-1. **O comando `db:seed` está sequestrado pelo pacote de tenancy.** Nesta versão do Laravel, o comando `tenants:seed` do `stancl/tenancy` acaba registrado com o nome `db:seed`. `php artisan db:seed` tenta semear tenants em vez do banco central.
-2. **Tenants antigos estão incompletos.** Os criados antes da fatia 1 não têm documento, plano nem contato. Seus usuários foram convertidos para os perfis de sistema e continuam com a senha de desenvolvimento. Dois deles, criados no período do Jetstream, tinham uma tabela `users` daquela época; ela foi preservada como `legacy_users` e pode ser removida.
-3. **Upload de arquivo em painel de tenant não foi tratado.** As rotas de upload e de pré-visualização de arquivo do Livewire não resolvem o tenant. Quando a primeira tela com upload existir em um painel de tenant, elas precisam do mesmo tratamento dado à rota de atualização.
-4. **"Esqueci minha senha" do tenant está habilitado, mas pouco exercitado.** A tela abre e é coberta por teste. O envio do e-mail de redefinição e a troca pelo link não foram testados de ponta a ponta.
-5. **Não há como desfazer uma verificação.** Um domínio verificado por engano só deixa de responder se for removido do tenant.
-. **Desativar uma pessoa não derruba a sessão na hora por conta própria.** A próxima requisição dela recebe "acesso negado", mas a sessão continua existindo até expirar.
-. **Permissões não estão ligadas a funcionalidades.** Uma permissão de um módulo continua aparecendo na tela de perfis mesmo com a funcionalidade dele desligada. Quando o primeiro módulo entrar, vale decidir se a permissão declara a funcionalidade de que depende.
-. **Tenant sem domínio para o painel de cliente.** O cliente é cadastrado e recebe o e-mail de acesso mesmo que o tenant não tenha nenhum domínio apontando para o painel de cliente. Nesse caso o link do e-mail leva a um painel em que ele não entra. Falta decidir se o cadastro deve ser recusado ou avisado nessa situação.
-12. **Usuário desativado continua responsável pelos clientes dele.** Desativar um usuário não redistribui a carteira: os clientes ficam vinculados a alguém que não entra mais, até o admin trocar os responsáveis. Ele deixa de poder ser escolhido como responsável novo.
-. **Suspensão não derruba jobs da plataforma.** O bloqueio cobre as telas. Dos jobs, só os que declararem o middleware de suspensão deixam de rodar; os da própria plataforma (provisionamento, emissão de senha provisória) não o declaram, porque só são disparados por telas que já estão bloqueadas.
-15. **Não há aviso ao tenant quando ele é suspenso ou reativado.** Ninguém recebe e-mail; as pessoas descobrem ao tentar entrar.
+### Cobrança
+
+1. **Excluir um tenant não cancela a assinatura no gateway.** A exclusão é lógica e reversível, e o gateway continua cobrando. O cancelamento precisa ser feito no painel do gateway.
+2. **Alterar o preço de um plano não atualiza as assinaturas já criadas.** Só a troca de plano ou de ciclo de um tenant ajusta a cobrança dele. Um reajuste de preço do plano não chega aos tenants que já estão nele.
+3. **O gateway de um tenant não pode ser trocado** (RN49). Migrar um tenant de gateway exige intervenção manual.
+4. **Só três tipos de evento têm efeito.** Estorno, chargeback e reativação de assinatura no gateway são gravados e ignorados.
+5. **O primeiro vencimento é fixo em relação ao cadastro** (7 dias por padrão). Não há período de teste nem data de vencimento escolhida por tenant.
+6. **Não há aviso ao tenant** sobre vencimento, carência, suspensão ou reativação por parte da plataforma. Os avisos de cobrança são os do próprio gateway.
+7. **Tenants antigos não têm assinatura.** Os criados antes desta fatia não têm registro de cobrança e não são afetados pela carência.
+
+### Plataforma
+
+8. **O comando `db:seed` está sequestrado pelo pacote de tenancy.** Nesta versão do Laravel, o comando `tenants:seed` do `stancl/tenancy` acaba registrado com o nome `db:seed`. `php artisan db:seed` tenta semear tenants em vez do banco central.
+9. **Tenants antigos estão incompletos.** Os criados antes da fatia 1 não têm documento, plano nem contato, e seus usuários continuam com a senha de desenvolvimento. Dois deles têm uma tabela `legacy_users`, da época do Jetstream, que pode ser removida.
+10. **Upload de arquivo em painel de tenant não foi tratado.** As rotas de upload e de pré-visualização do Livewire não resolvem o tenant.
+11. **"Esqueci minha senha" do tenant está habilitado, mas pouco exercitado.** A tela abre e é coberta por teste; o envio do e-mail e a troca pelo link não foram testados de ponta a ponta.
+12. **Não há como desfazer a verificação de um domínio.**
+13. **RNF02 e RNF03 não foram medidos em condição real.** Só há números de teste automatizado, sem carga.
+14. **Desativar uma pessoa não derruba a sessão dela**; a próxima requisição recebe "acesso negado".
+15. **O Redis deste projeto disputa a porta 6379** com outros projetos na mesma máquina.
+16. **Permissões não estão ligadas a funcionalidades.**
+17. **Um trait sem uso no código de produção** (`RequiresFeature`), com exceção em `phpstan.neon` até um módulo usá-lo.
+18. **Tenant sem domínio para o painel de cliente** ainda permite cadastrar cliente, que recebe um link que não serve para ele.
+19. **Usuário desativado continua responsável pelos clientes dele** até o admin trocar os responsáveis.
+20. **Cliente usa sempre o perfil de sistema Cliente**; não há tela para atribuir um perfil customizado de tipo cliente.
+21. **Não há aviso ao tenant quando ele é suspenso ou reativado manualmente.**
 
 ## Divergências em relação ao padrão técnico
 
 | Regra do padrão | Código hoje |
 |---|---|
-| Fluxo em camadas | Atendido em planos, tenants, provisionamento, domínios, pessoas, perfis, funcionalidades, clientes e situação |
+| Fluxo em camadas | Atendido em todas as fatias. O webhook entra por Controller → DTO → Action → Service → Repository |
 | `strict_types`, `final`, `pint.json`, PHPStan nível 8 | Atendido |
 | Jobs disparados só por Listeners | Atendido |
-| Job em contexto de tenant inicializa a tenancy | Atendido de duas formas: o provisionamento roda no contexto central e troca de contexto no serviço; a emissão de senha provisória é despachada de dentro do tenant e o pacote de tenancy a executa no mesmo tenant, o que o job confere antes de agir |
-| Resolução de tenant por middleware | Atendido, com middleware próprio no lugar do middleware do pacote (ADR-0008) |
-| Cache com tag do tenant | Não se aplica: o único cache é o de resolução de domínio, que é dado do central. As funcionalidades não usam cache, de propósito |
-| Observer só para efeito técnico | Atendido: `DomainObserver` e `TenantObserver` apenas limpam cache |
-| Integração externa assíncrona | Duas exceções deliberadas, comentadas no código: a notificação da senha provisória é enviada de dentro de um job, sem ser enfileirada; e o teste de DNS é síncrono, por ser uma conferência interativa |
+| Integração externa assíncrona | Atendido para os gateways: criação e alteração de assinatura rodam em job. Exceções deliberadas e comentadas no código: a notificação de senha provisória é enviada de dentro de um job sem ser enfileirada, e o teste de DNS é síncrono |
+| Exceção de infraestrutura traduzida na borda | Atendido nos gateways: toda falha vira `BillingException`, com a mensagem legível do gateway |
+| Job em contexto de tenant inicializa a tenancy | Atendido: os jobs de cobrança e de provisionamento rodam no contexto central; o de senha provisória é executado pelo pacote no tenant de origem e confere isso |
+| Resolução de tenant por middleware | Atendido, com middleware próprio (ADR-0008) |
+| Cache com tag do tenant | Não se aplica: o único cache é o de resolução de domínio, dado do central |
+| Observer só para efeito técnico | Atendido |
 | Exceções de domínio | Atendido |
-| Cobertura ≥ 80% em Services e Actions | Atendido: Actions em 100% e Services de regra entre 96% e 100%; total do projeto em 94,6% (195 testes). O adaptador de DNS do sistema (`SystemDnsLookup`) não tem teste, porque consulta DNS de verdade; nos testes ele é substituído por um falso |
+| FormRequest na entrada HTTP | Não se aplica ao webhook: o corpo é conferido pela assinatura do gateway e interpretado pelo tradutor de cada um, não por regras de validação de formulário |
+| Cobertura ≥ 80% em Services e Actions | Atendido: Actions em 100% e Services entre 88% e 100%; total do projeto em 94,6% (221 testes). O adaptador de DNS do sistema (`SystemDnsLookup`) não tem teste, porque consulta DNS de verdade. Os gateways são testados contra respostas simuladas |

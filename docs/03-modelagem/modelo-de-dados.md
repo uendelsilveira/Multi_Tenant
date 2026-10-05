@@ -84,11 +84,13 @@ erDiagram
     SUBSCRIPTIONS {
         id id
         string tenant_id
-        id plan_id
         string gateway
+        string gateway_customer_id
         string gateway_subscription_id
         string status
-        datetime current_period_end
+        datetime overdue_since
+        datetime last_paid_at
+        string last_error
     }
     WEBHOOK_EVENTS {
         id id
@@ -96,6 +98,8 @@ erDiagram
         string gateway_event_id
         string type
         json payload
+        string tenant_id
+        string outcome
         datetime processed_at
     }
     TENANT_STATUS_LOGS {
@@ -116,6 +120,10 @@ Restrições:
 - `tenants.id` é o slug (RN20). `tenants.document` é único. `tenants.deleted_at` marca a exclusão lógica (RN24).
 - `plan_prices` tem unicidade em `(plan_id, billing_cycle)`. `billing_cycle` ∈ `monthly | semiannual | annual`, em `plan_prices` e em `tenants`.
 - `tenant_status_logs` só recebe inserções. Excluir o registro de um tenant com histórico é barrado pelo banco.
+- `subscriptions.status` ∈ `pending | active | overdue | canceled | failed`. É a situação da cobrança, diferente de `tenants.status`: uma assinatura vencida só suspende o tenant ao fim da carência, contada de `overdue_since`.
+- `subscriptions.tenant_id` é único: uma assinatura por tenant. O plano e o ciclo cobrados são os do tenant, não ficam repetidos na assinatura.
+- `plans.stripe_product_id` guarda o produto que representa o plano no Stripe, criado no primeiro uso.
+- `webhook_events.outcome` ∈ `applied | ignored | unmatched`; vazio enquanto o evento aguarda processamento.
 - `tenants.provisioning_status` ∈ `pending | provisioning | ready | failed`. É independente de `tenants.status`: um diz se o ambiente existe, o outro se o tenant pode operar.
 - `domains.domain` é único.
 - `domains.panel` ∈ `admin | user | customer`. `domains.status` ∈ `pending | active`.

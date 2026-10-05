@@ -19,7 +19,7 @@
 | RN15 | O **Admin** inicial é criado pelo **Provisionamento**, com uma **Senha Provisória** gerada pela plataforma, gravada apenas como hash e enviada por e-mail. Ela obriga a troca no primeiro acesso. |
 | RN16 | **Tenant** suspenso fica inteiramente bloqueado: ninguém entra, consulta ou altera nada. Os dados são preservados e o acesso volta na hora em que ele é reativado. Substitui a decisão inicial de somente leitura (ADR-0010). |
 | RN17 | Enquanto houver **Trava Manual** vigente, a cobrança automática não altera a situação do **Tenant**. O central continua podendo alterá-la, e a trava deixa de valer sozinha quando a data passa. |
-| RN18 | Cada evento de cobrança produz efeito no máximo uma vez, mesmo se reenviado. |
+| RN18 | Cada evento de cobrança produz efeito no máximo uma vez, mesmo se reenviado: o mesmo identificador, no mesmo gateway, só é gravado uma vez. |
 | RN19 | Toda mudança manual de situação exige motivo. O motivo é interno: fica no histórico e não é mostrado ao tenant, que vê apenas um aviso genérico. |
 | RN20 | O **Slug** tem de 3 a 50 caracteres, só letras minúsculas, números e hífen, começa por letra, é único e não muda depois de criado. Ele dá nome ao banco do tenant. |
 | RN21 | Todo **Tenant** tem ao menos um **Domínio**, e ao menos um deles aponta para o **Painel** admin. O domínio é o endereço completo, não pode ser um domínio do central nem repetir o de outro tenant. |
@@ -48,13 +48,20 @@
 | RN44 | Cliente não é excluído, só desativado, por quem gerencia todos os clientes. Cliente fica fora da gestão de pessoas: não aparece nela nem é alcançado por suas ações. |
 | RN45 | A situação do tenant só é alterada por um único ponto do sistema, que sempre registra a mudança no histórico. O histórico só cresce: nenhuma linha é editada ou apagada. |
 | RN46 | A suspensão não afeta o painel central, e é independente da situação do ambiente: um tenant pode estar provisionado e suspenso. |
+| RN47 | A **Carência** é de 10 dias, contados do primeiro aviso de vencimento. Avisos repetidos não reiniciam a contagem. Dentro da carência o tenant continua ativo. |
+| RN48 | **Assinatura** cancelada no gateway suspende o tenant na hora, como qualquer suspensão: bloqueio total, dados preservados. Não há estado próprio de cancelado. |
+| RN49 | O **Gateway** de um tenant é escolhido no cadastro e não muda depois. |
+| RN50 | Pagamento confirmado reativa o tenant suspenso, tenha a suspensão vindo da cobrança ou do central, salvo se houver **Trava Manual** vigente. |
+| RN51 | A troca de plano ou de ciclo vale na hora no sistema, sem devolução nem cobrança proporcional: o novo valor entra na próxima cobrança. |
+| RN52 | Falha ao criar a assinatura no gateway não suspende nem impede o uso do tenant; fica registrada para correção e nova tentativa. |
+| RN53 | Eventos de cobrança de um tenant excluído são registrados e não alteram situação nenhuma. |
 
 ## Pontos em aberto
 
 Não foram decididos na entrevista. Cada um vira RN (ou item de "fora do escopo") quando houver resposta.
 
-1. **Carência antes de suspender.** Quantos dias entre a falha de pagamento e a suspensão? Recomendação: 3 a 5 dias, com aviso no painel admin.
+1. ~~Carência antes de suspender.~~ Decidido: 10 dias (RN47).
 2. ~~Admin cadastra cliente?~~ Decidido: não. Só usuário cadastra; o admin vê todos, gerencia os vínculos e desativa (RN14, RN43, RN44).
 3. ~~Tipo base de perfil customizado pode mudar depois de criado?~~ Decidido: pode mudar sempre (RN10), respeitada a RN36.
-4. **Valor pago no downgrade.** Com o desligamento imediato, o tenant perde o que pagou até o fim do ciclo. Definir política (crédito, proporcional ou sem devolução).
-5. **Cancelamento de assinatura.** Cancelado é igual a suspenso (somente leitura) ou há um estado final com prazo para retirada dos dados?
+4. ~~Valor pago no downgrade.~~ Decidido: sem devolução nem proporcional; o novo valor vale na próxima cobrança (RN51).
+5. ~~Cancelamento de assinatura.~~ Decidido: igual a suspensão (RN48). Uma política de retenção, com prazo para retirada e exclusão de dados, continua por definir.

@@ -84,6 +84,14 @@ _Avoid_: Feature, módulo, recurso
 Vínculo de cobrança recorrente entre um Tenant e um Plano, em um gateway.
 _Avoid_: Contrato, mensalidade
 
+**Gateway**:
+Serviço externo que emite e recebe as cobranças de uma Assinatura. Cada Tenant é cobrado por um só, escolhido no cadastro.
+_Avoid_: Meio de pagamento, processadora, banco
+
+**Carência**:
+Prazo entre o vencimento de uma cobrança e a Suspensão do Tenant por falta de pagamento.
+_Avoid_: Tolerância, prazo de graça, atraso permitido
+
 **Situação**:
 Estado do Tenant perante a plataforma: ativo ou suspenso.
 _Avoid_: Status de pagamento, bloqueio
@@ -124,7 +132,8 @@ _Avoid_: Senha temporária, senha inicial, senha padrão
 - Só **Domínio** verificado responde; cada **Domínio** serve um único **Painel**, no caminho próprio dele
 - Um **Usuário** atende vários **Clientes**, e um **Cliente** é atendido por um ou mais **Usuários**, seus responsáveis
 - Um **Cliente** é cadastrado por um **Usuário** e nasce vinculado a ele; o **Admin** ajusta os vínculos depois
-- Um **Tenant** tem no máximo uma **Assinatura** vigente
+- Um **Tenant** tem uma **Assinatura**, em um **Gateway**
+- Uma cobrança vencida inicia a **Carência**; só ao fim dela vem a **Suspensão**
 - O **Provisionamento** de um **Tenant** cria seu **Admin** inicial a partir do responsável e do e-mail de contato, com uma **Senha Provisória**
 
 ## Domain → Technical Mapping
@@ -149,7 +158,12 @@ Linhas sem "(planejado)" já estão implementadas. As demais são intenção de 
 | Testar DNS de um Domínio | `CheckTenantDomainDnsAction` | `TenantDomainService` | — |
 | Resolver Domínio da requisição | (middleware) `InitializeTenancyForTenantDomain` | `TenantDomainService` | — |
 | Alterar Situação manualmente | `ChangeTenantStatusAction` | `TenantStatusService` | `TenantStatusChanged` |
-| Processar evento de cobrança (planejado) | (job) `ProcessWebhookEventJob` | `SubscriptionService` → `TenantStatusService` | `TenantStatusChanged` |
+| Criar a Assinatura no gateway | (job) `StartTenantSubscriptionJob` → `StartTenantSubscriptionAction` | `BillingService` | — |
+| Tentar criar a Assinatura de novo | `RetryTenantSubscriptionAction` | `BillingService` | `TenantSubscriptionRetryRequested` |
+| Receber evento de cobrança | `ReceiveWebhookAction` | `WebhookService` | `WebhookEventReceived` |
+| Processar evento de cobrança | (job) `ProcessWebhookEventJob` → `ProcessWebhookEventAction` | `BillingService` → `TenantStatusService` | `TenantStatusChanged` |
+| Aplicar a Carência | (comando agendado) `EnforceGracePeriodAction` | `BillingService` → `TenantStatusService` | `TenantStatusChanged` |
+| Levar novo Plano ou Ciclo à cobrança | (job) `SyncSubscriptionPriceJob` → `SyncSubscriptionPriceAction` | `BillingService` | — |
 | Ligar e desligar Funcionalidade | `ToggleFeatureAction` | `TenantFeatureService` | `FeatureToggled` |
 | Trocar o Plano de um Tenant | `UpdateTenantAction` | `TenantService` | `TenantPlanChanged` |
 | Criar, alterar e excluir Perfil Customizado | `CreateRoleAction`, `UpdateRoleAction`, `DeleteRoleAction` | `RoleService` | — |

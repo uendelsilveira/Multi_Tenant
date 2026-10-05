@@ -23,7 +23,7 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 | RF15 | RN04 | — | `TenantFeatureService`, `EnsureFeatureIsActive`, trait `RequiresFeature`, `SkipWhenFeatureIsInactive` | `TenantFeatureServiceTest`, `TenantFeaturesTest` |
 | RF16 | RN14, RN41, RN42 | — | `CustomerResource` (painel do usuário) → `CreateCustomerAction`, `UpdateCustomerAction` → `CustomerService` | `CustomerServiceTest`, `TenantCustomersTest` |
 | RF17 | RN43, RN44 | — | `CustomerPolicy`, `CustomerResource` (painel admin) → `SyncCustomerResponsiblesAction`, `SetCustomerActiveAction` → `CustomerService`; pivot `customer_user` | `CustomerServiceTest`, `TenantCustomersTest` |
-| RF18 | RN17, RN18 | — | Endpoints de webhook, `ProcessWebhookEventJob`, `SubscriptionService` | — |
+| RF18 | RN17, RN18, RN48, RN50, RN53 | — | `WebhookController` → `ReceiveWebhookAction` → `WebhookService`; `WebhookEventReceived` → `DispatchWebhookProcessing` → `ProcessWebhookEventJob` → `BillingService` → `TenantStatusService` | `GatewaysTest`, `BillingFlowTest` |
 | RF19 | RN16, RN46 | — | `EnsureTenantIsNotSuspended` (painéis, raiz do domínio e rota do Livewire), `SkipWhenTenantIsSuspended` | `TenantStatusTest`, `SuspendedTenantTest` |
 | RF20 | RN05, RN07 | — | `TenantFeatureService` relê o plano a cada requisição, sem cache | `TenantFeatureServiceTest`, `TenantFeaturesTest` |
 | RF21 | RN24 | — | `SoftDeleteTenantAction`, `RestoreTenantAction` → `TenantService` | `TenantResourceTest`, `TenantRepositoryTest`, `SoftDeleteKeepsTenantDatabaseTest` |
@@ -32,6 +32,10 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 | RF24 | RN28 | — | `RequestProvisionalPasswordResendAction` → `ResendProvisionalPasswordJob` → `ResendProvisionalPasswordAction` | `TenantProvisioningServiceTest`, `TenantProvisioningFlowTest` |
 | RF25 | RN30 | — | `EnsureTenantIsProvisioned` | `UnprovisionedTenantTest` |
 | RF26 | RN28, RN38 | — | `TenantUserAccessRequested` → `DispatchProvisionalPasswordIssue` → `IssueTenantUserProvisionalPasswordJob` → `TenantUserService` | `TenantUserServiceTest`, `TenantPeopleAndRolesTest` |
+| RF27 | RN49, RN52 | — | `TenantRegistered` → `DispatchSubscriptionStart` → `StartTenantSubscriptionJob` → `BillingService` → `PaymentGatewayInterface` (`AsaasGateway`, `StripeGateway`); `RetryTenantSubscriptionAction` | `GatewaysTest`, `BillingFlowTest` |
+| RF28 | RN17, RN47, RN50 | — | comando `billing:enforce-grace` → `EnforceGracePeriodAction` → `BillingService` → `TenantStatusService` | `BillingFlowTest`, `TenantStatusServiceTest` |
+| RF29 | — | — | `WebhookEventResource`, `WebhookEventPolicy` | `BillingFlowTest` |
+| RF30 | RN51 | — | `TenantPlanChanged` → `DispatchSubscriptionPriceSync` → `SyncSubscriptionPriceJob` → `BillingService` | `GatewaysTest`, `BillingFlowTest` |
 
 ## RNs ainda sem RF
 

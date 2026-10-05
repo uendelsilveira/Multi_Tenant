@@ -50,6 +50,10 @@
 
 | ID | Requisito |
 |---|---|
-| RF18 | O sistema recebe eventos de cobrança do Asaas e do Stripe e atualiza a situação do **Tenant** conforme o evento. |
+| RF18 | O sistema recebe eventos de cobrança do Asaas e do Stripe, confere a origem de cada um, grava-os e os aplica: pagamento confirmado, pagamento vencido e assinatura cancelada. |
 | RF19 | Com o **Tenant** suspenso, todos os painéis dele ficam bloqueados: qualquer acesso, inclusive de quem já estava usando, recebe uma página informando a suspensão e pedindo contato com o administrador. Processamento em segundo plano de módulos não executa. |
 | RF20 | A troca de **Plano**, e a alteração das funcionalidades de um plano, valem imediatamente: o que saiu do plano fica inativo na mesma hora, e o que voltou reaparece com a escolha que o admin tinha feito. |
+| RF27 | No cadastro do **Tenant**, o **Usuário Central** escolhe o **Gateway**. O sistema cria o pagador e a **Assinatura** nele, em segundo plano, com o valor e o **Ciclo** do plano. Se a criação falhar, o motivo aparece na listagem de tenants e o central pode mandar tentar de novo. |
+| RF28 | Um pagamento vencido inicia a **Carência**. Vencida a carência sem pagamento, o sistema suspende o **Tenant**. Um pagamento confirmado reativa o tenant. |
+| RF29 | O **Usuário Central** consulta os eventos de cobrança recebidos, com gateway, tipo, tenant e o que foi feito com cada um. |
+| RF30 | A troca de **Plano** ou de **Ciclo** de um tenant ajusta o valor das próximas cobranças no **Gateway**. |

@@ -22,7 +22,7 @@ Esta é a documentação da **Onda 0**: esqueleto do problema, requisitos macro,
 
 ## Pendências antes de fechar a Onda 0
 
-1. Adequar o código ao padrão técnico e à documentação, na ordem de estado-atual.md.
+1. Testar a cobrança contra o sandbox do Asaas e do Stripe, como descrito em `estado-atual.md`.
 2. Confirmar as premissas de `contexto.md` (quem sofre a dor e a métrica de sucesso).
 3. Confirmar ou ajustar a lista de "Fora do escopo".
 4. Ajustar os valores dos RNFs.
