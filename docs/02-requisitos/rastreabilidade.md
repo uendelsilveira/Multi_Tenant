@@ -11,8 +11,8 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 | RF03 | RN02, RN31 | — | `DomainResource` → `VerifyTenantDomainAction`, `CheckTenantDomainDnsAction` → `TenantDomainService` | `TenantDomainServiceTest`, `DomainResourceTest`, `TenantDomainRoutingTest` |
 | RF04 | RN06, RN22, RN23 | — | `CreatePlanAction`, `UpdatePlanAction`, `DeletePlanAction` → `PlanService`; `SyncFeatureCatalogAction` → `FeatureService` | `PlanServiceTest`, `PlanRepositoryTest`, `PlanResourceTest` |
 | RF05 | RN07 | — | `UpdateTenantAction` → `TenantService`; evento `TenantPlanChanged` | `TenantFeaturesTest`, `EditTenantTest` |
-| RF06 | RN17, RN19 | — | `ChangeTenantStatusAction` → `SubscriptionService` | — |
-| RF07 | RN19 | — | `tenant_status_logs` | — |
+| RF06 | RN17, RN19, RN45 | — | `TenantChangeStatusAction` (tela) → `ChangeTenantStatusAction` → `TenantStatusService` → `TenantRepository::changeStatus` | `TenantStatusServiceTest`, `TenantStatusTest` |
+| RF07 | RN19, RN45 | — | `tenant_status_logs`, `StatusLogsRelationManager` | `TenantStatusTest`, `SuspendedTenantTest` |
 | RF08 | RN01, RN02, RN32, RN34 | — | `InitializeTenancyForTenantDomain`, `EnsureDomainMatchesPanel` → `TenantDomainService`; `DomainObserver`, `TenantObserver` | `TenantDomainServiceTest`, `TenantDomainRoutingTest`, `TenantProvisioningFlowTest` |
 | RF09 | RN08, RN33 | — | `TenantUser::canAccessPanel`, `User::canAccessPanel`, guard `tenant` | `UnknownRoleTest`, `TenantProvisioningFlowTest` |
 | RF10 | RN15, RN28 | — | `EnforceProvisionalPasswordChange`, página `ChangeProvisionalPassword` → `ChangeProvisionalPasswordAction` → `TenantUserService` | `TenantUserServiceTest`, `TenantProvisioningFlowTest` |
@@ -24,7 +24,7 @@ Linhas com a coluna Teste preenchida estão implementadas. Nas demais, o artefat
 | RF16 | RN14, RN41, RN42 | — | `CustomerResource` (painel do usuário) → `CreateCustomerAction`, `UpdateCustomerAction` → `CustomerService` | `CustomerServiceTest`, `TenantCustomersTest` |
 | RF17 | RN43, RN44 | — | `CustomerPolicy`, `CustomerResource` (painel admin) → `SyncCustomerResponsiblesAction`, `SetCustomerActiveAction` → `CustomerService`; pivot `customer_user` | `CustomerServiceTest`, `TenantCustomersTest` |
 | RF18 | RN17, RN18 | — | Endpoints de webhook, `ProcessWebhookEventJob`, `SubscriptionService` | — |
-| RF19 | RN16 | — | Negação central de escrita (`Gate::before`) | — |
+| RF19 | RN16, RN46 | — | `EnsureTenantIsNotSuspended` (painéis, raiz do domínio e rota do Livewire), `SkipWhenTenantIsSuspended` | `TenantStatusTest`, `SuspendedTenantTest` |
 | RF20 | RN05, RN07 | — | `TenantFeatureService` relê o plano a cada requisição, sem cache | `TenantFeatureServiceTest`, `TenantFeaturesTest` |
 | RF21 | RN24 | — | `SoftDeleteTenantAction`, `RestoreTenantAction` → `TenantService` | `TenantResourceTest`, `TenantRepositoryTest`, `SoftDeleteKeepsTenantDatabaseTest` |
 | RF22 | RN26 | — | `PlanPolicy`, `TenantPolicy` | `PlanResourceTest`, `TenantResourceTest` |
@@ -47,3 +47,6 @@ Nenhuma. Toda RN de `regras-de-negocio.md` aparece em pelo menos uma linha acima
 | ADR-0004 | RF01, RF11 |
 | ADR-0005 | RF04, RF14, RF15, RF20 |
 | ADR-0006 | RF18 |
+| ADR-0008 | RF08, RF09 |
+| ADR-0009 | RF13 |
+| ADR-0010 | RF19 |

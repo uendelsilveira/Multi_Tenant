@@ -17,10 +17,10 @@
 | RN13 | O central nunca acessa o ambiente nem os dados de um **Tenant**. |
 | RN14 | **Cliente** é cadastrado apenas por **Usuário** do tenant. O admin não cadastra, e não há autocadastro. |
 | RN15 | O **Admin** inicial é criado pelo **Provisionamento**, com uma **Senha Provisória** gerada pela plataforma, gravada apenas como hash e enviada por e-mail. Ela obriga a troca no primeiro acesso. |
-| RN16 | **Tenant** suspenso opera em somente leitura: consulta sim, alteração não. |
-| RN17 | Enquanto houver trava manual vigente, eventos de cobrança são registrados mas não alteram a situação do **Tenant**. |
+| RN16 | **Tenant** suspenso fica inteiramente bloqueado: ninguém entra, consulta ou altera nada. Os dados são preservados e o acesso volta na hora em que ele é reativado. Substitui a decisão inicial de somente leitura (ADR-0010). |
+| RN17 | Enquanto houver **Trava Manual** vigente, a cobrança automática não altera a situação do **Tenant**. O central continua podendo alterá-la, e a trava deixa de valer sozinha quando a data passa. |
 | RN18 | Cada evento de cobrança produz efeito no máximo uma vez, mesmo se reenviado. |
-| RN19 | Toda mudança manual de situação exige motivo. |
+| RN19 | Toda mudança manual de situação exige motivo. O motivo é interno: fica no histórico e não é mostrado ao tenant, que vê apenas um aviso genérico. |
 | RN20 | O **Slug** tem de 3 a 50 caracteres, só letras minúsculas, números e hífen, começa por letra, é único e não muda depois de criado. Ele dá nome ao banco do tenant. |
 | RN21 | Todo **Tenant** tem ao menos um **Domínio**, e ao menos um deles aponta para o **Painel** admin. O domínio é o endereço completo, não pode ser um domínio do central nem repetir o de outro tenant. |
 | RN22 | Um **Plano** oferece de um a três **Ciclos** (mensal, semestral, anual), cada um com seu preço. O **Tenant** contrata o plano em um ciclo que ele ofereça. |
@@ -46,6 +46,8 @@
 | RN42 | O e-mail é único entre todas as pessoas do tenant, clientes inclusive. Cadastrar um e-mail que já existe é recusado, com a orientação de pedir o vínculo ao admin. |
 | RN43 | Todo **Cliente** tem pelo menos um **Usuário** responsável, e só usuário ativo pode ser responsável. O cliente nasce vinculado a quem o cadastrou; depois, só quem gerencia todos os clientes altera os vínculos. |
 | RN44 | Cliente não é excluído, só desativado, por quem gerencia todos os clientes. Cliente fica fora da gestão de pessoas: não aparece nela nem é alcançado por suas ações. |
+| RN45 | A situação do tenant só é alterada por um único ponto do sistema, que sempre registra a mudança no histórico. O histórico só cresce: nenhuma linha é editada ou apagada. |
+| RN46 | A suspensão não afeta o painel central, e é independente da situação do ambiente: um tenant pode estar provisionado e suspenso. |
 
 ## Pontos em aberto
 

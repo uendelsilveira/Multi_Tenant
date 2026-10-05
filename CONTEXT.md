@@ -89,7 +89,7 @@ Estado do Tenant perante a plataforma: ativo ou suspenso.
 _Avoid_: Status de pagamento, bloqueio
 
 **Suspensão**:
-Situação em que o Tenant acessa e consulta, mas não altera nada.
+Situação em que o Tenant fica inteiramente bloqueado: ninguém entra em nenhum painel dele, e quem tenta é orientado a procurar o administrador.
 _Avoid_: Bloqueio, cancelamento, inadimplência
 
 **Exclusão**:
@@ -148,8 +148,8 @@ Linhas sem "(planejado)" já estão implementadas. As demais são intenção de 
 | Verificar Domínio | `VerifyTenantDomainAction` | `TenantDomainService` | `TenantDomainVerified` |
 | Testar DNS de um Domínio | `CheckTenantDomainDnsAction` | `TenantDomainService` | — |
 | Resolver Domínio da requisição | (middleware) `InitializeTenancyForTenantDomain` | `TenantDomainService` | — |
-| Alterar Situação manualmente (planejado) | `ChangeTenantStatusAction` | `SubscriptionService` | `TenantStatusChanged` |
-| Processar evento de cobrança (planejado) | (job) `ProcessWebhookEventJob` | `SubscriptionService` | `TenantStatusChanged` |
+| Alterar Situação manualmente | `ChangeTenantStatusAction` | `TenantStatusService` | `TenantStatusChanged` |
+| Processar evento de cobrança (planejado) | (job) `ProcessWebhookEventJob` | `SubscriptionService` → `TenantStatusService` | `TenantStatusChanged` |
 | Ligar e desligar Funcionalidade | `ToggleFeatureAction` | `TenantFeatureService` | `FeatureToggled` |
 | Trocar o Plano de um Tenant | `UpdateTenantAction` | `TenantService` | `TenantPlanChanged` |
 | Criar, alterar e excluir Perfil Customizado | `CreateRoleAction`, `UpdateRoleAction`, `DeleteRoleAction` | `RoleService` | — |

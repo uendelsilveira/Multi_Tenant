@@ -11,7 +11,7 @@
 - Catálogo de funcionalidades, liberação por plano e tela de liga/desliga no painel admin.
 - Cadastro de clientes pelo usuário do tenant, com vínculo N:N.
 - Assinatura com cobrança automática por Asaas e Stripe, e ajuste manual pelo central.
-- Suspensão em modo somente leitura.
+- Suspensão com bloqueio total do tenant.
 
 ## Fora do escopo
 

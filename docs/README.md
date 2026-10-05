@@ -17,7 +17,7 @@ Esta é a documentação da **Onda 0**: esqueleto do problema, requisitos macro,
 | Modelagem | [03-modelagem/modelo-de-dados.md](03-modelagem/modelo-de-dados.md) | Modelo alvo; o código ainda não o implementa |
 | Arquitetura | [04-arquitetura/visao-geral.md](04-arquitetura/visao-geral.md) | Arquitetura alvo, com 2 pontos a validar |
 | Arquitetura | [04-arquitetura/estado-atual.md](04-arquitetura/estado-atual.md) | Retrato do código × documentação e padrão técnico |
-| Decisões | [adr/](adr/) | 9 ADRs aceitas |
+| Decisões | [adr/](adr/) | 10 ADRs aceitas |
 | Glossário | [../CONTEXT.md](../CONTEXT.md) | Decidido |
 
 ## Pendências antes de fechar a Onda 0

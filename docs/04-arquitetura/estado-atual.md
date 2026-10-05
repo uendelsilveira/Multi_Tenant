@@ -1,6 +1,6 @@
 # Estado atual do código × documentação
 
-Retrato do repositório em 2026-10-04, na branch `main`, depois da fatia 6. Compara o que existe com o que foi decidido em `docs/` e com o padrão técnico (`laravel-tech-standard`, `laravel-filament-specialist`).
+Retrato do repositório em 2026-10-04, na branch `main`, depois da fatia 7. Compara o que existe com o que foi decidido em `docs/` e com o padrão técnico (`laravel-tech-standard`, `laravel-filament-specialist`).
 
 Quando as divergências forem resolvidas, este arquivo deve ser removido, não mantido.
 
@@ -19,19 +19,17 @@ Quando as divergências forem resolvidas, este arquivo deve ser removido, não m
 | 3 | Resolução por domínio, três painéis de tenant, verificação de domínio (RF03, RF08, RF09) | Concluída |
 | 4 | Pessoas e perfis (RF12, RF13, RF26) | Concluída |
 | 5 | Funcionalidades: liga/desliga e troca de plano (RF05, RF14, RF15, RF20) | Concluída |
-| 6 | Clientes e vínculo N:N (RF16, RF17) | **Concluída** |
-| 7 | Situação manual e somente leitura (RF06, RF07, RF19) | Pendente |
+| 6 | Clientes e vínculo N:N (RF16, RF17) | Concluída |
+| 7 | Situação manual, bloqueio na suspensão e histórico (RF06, RF07, RF19) | **Concluída** |
 | 8 | Cobrança automática (RF18) | Pendente |
 
-## O que a fatia 6 entregou
+## O que a fatia 7 entregou
 
-- Tela **Clientes** no painel do usuário: ele cadastra, vê e edita só os clientes vinculados a ele.
-- Tela **Clientes** no painel admin: todos os clientes, com a definição de quem atende cada um e a desativação. O admin não cadastra.
-- Tabelas `customer_user` (vínculo N:N) e `customer_profiles` (telefone, documento, observações) em cada tenant.
-- Todo cliente recebe acesso ao portal por senha provisória, com o link do domínio do painel de cliente.
-- E-mail único entre todas as pessoas do tenant; todo cliente com pelo menos um usuário responsável.
-- Duas permissões novas: gerenciar os próprios clientes (tipo usuário) e gerenciar todos os clientes (tipo admin).
-- A gestão de pessoas deixou de listar e de alcançar clientes.
+- Ação **Alterar situação** na listagem de tenants do central, com motivo obrigatório e trava opcional por prazo.
+- Histórico de situação na edição do tenant, com origem, autor, motivo e trava.
+- Tenant suspenso bloqueado por inteiro, com página que pede contato com o administrador (ADR-0010). Vale também para quem já estava com a tela aberta.
+- Ponto único de alteração da situação (`TenantStatusService`), já com o caminho que a cobrança automática vai usar e o respeito à trava.
+- Middleware de job para os módulos não processarem nada de um tenant suspenso.
 
 ## Para rodar em desenvolvimento
 
@@ -43,7 +41,6 @@ Quando as divergências forem resolvidas, este arquivo deve ser removido, não m
 
 | Tema | Documentado | Código hoje |
 |---|---|---|
-| Situação do tenant | Suspensão em somente leitura, trava manual, histórico (RF06, RF07, RF19) | Coluna `status` existe e nasce `active`; nada a altera nem a aplica |
 | Cobrança | `subscriptions`, `webhook_events`, `tenant_status_logs` | Não existem |
 | Conteúdo do portal do cliente | Telas do cliente | O cliente entra no portal e vê só o painel de controle padrão. O que ele faz ali depende dos módulos |
 | Catálogo de permissões | Permissões dos módulos | Só as duas da plataforma; os módulos ainda não existem |
@@ -61,13 +58,14 @@ Quando as divergências forem resolvidas, este arquivo deve ser removido, não m
 . **Permissões não estão ligadas a funcionalidades.** Uma permissão de um módulo continua aparecendo na tela de perfis mesmo com a funcionalidade dele desligada. Quando o primeiro módulo entrar, vale decidir se a permissão declara a funcionalidade de que depende.
 . **Tenant sem domínio para o painel de cliente.** O cliente é cadastrado e recebe o e-mail de acesso mesmo que o tenant não tenha nenhum domínio apontando para o painel de cliente. Nesse caso o link do e-mail leva a um painel em que ele não entra. Falta decidir se o cadastro deve ser recusado ou avisado nessa situação.
 12. **Usuário desativado continua responsável pelos clientes dele.** Desativar um usuário não redistribui a carteira: os clientes ficam vinculados a alguém que não entra mais, até o admin trocar os responsáveis. Ele deixa de poder ser escolhido como responsável novo.
-13. **Cliente usa sempre o perfil de sistema Cliente.** Perfis customizados de tipo cliente podem ser criados, mas não há tela para atribuí-los a um cliente.
+. **Suspensão não derruba jobs da plataforma.** O bloqueio cobre as telas. Dos jobs, só os que declararem o middleware de suspensão deixam de rodar; os da própria plataforma (provisionamento, emissão de senha provisória) não o declaram, porque só são disparados por telas que já estão bloqueadas.
+15. **Não há aviso ao tenant quando ele é suspenso ou reativado.** Ninguém recebe e-mail; as pessoas descobrem ao tentar entrar.
 
 ## Divergências em relação ao padrão técnico
 
 | Regra do padrão | Código hoje |
 |---|---|
-| Fluxo em camadas | Atendido em planos, tenants, provisionamento, domínios, pessoas, perfis, funcionalidades e clientes |
+| Fluxo em camadas | Atendido em planos, tenants, provisionamento, domínios, pessoas, perfis, funcionalidades, clientes e situação |
 | `strict_types`, `final`, `pint.json`, PHPStan nível 8 | Atendido |
 | Jobs disparados só por Listeners | Atendido |
 | Job em contexto de tenant inicializa a tenancy | Atendido de duas formas: o provisionamento roda no contexto central e troca de contexto no serviço; a emissão de senha provisória é despachada de dentro do tenant e o pacote de tenancy a executa no mesmo tenant, o que o job confere antes de agir |
@@ -76,4 +74,4 @@ Quando as divergências forem resolvidas, este arquivo deve ser removido, não m
 | Observer só para efeito técnico | Atendido: `DomainObserver` e `TenantObserver` apenas limpam cache |
 | Integração externa assíncrona | Duas exceções deliberadas, comentadas no código: a notificação da senha provisória é enviada de dentro de um job, sem ser enfileirada; e o teste de DNS é síncrono, por ser uma conferência interativa |
 | Exceções de domínio | Atendido |
-| Cobertura ≥ 80% em Services e Actions | Atendido: Actions em 100% e Services de regra entre 96% e 100%; total do projeto em 94,5% (178 testes). O adaptador de DNS do sistema (`SystemDnsLookup`) não tem teste, porque consulta DNS de verdade; nos testes ele é substituído por um falso |
+| Cobertura ≥ 80% em Services e Actions | Atendido: Actions em 100% e Services de regra entre 96% e 100%; total do projeto em 94,6% (195 testes). O adaptador de DNS do sistema (`SystemDnsLookup`) não tem teste, porque consulta DNS de verdade; nos testes ele é substituído por um falso |

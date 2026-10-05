@@ -12,8 +12,8 @@
 | RF03 | Todo **Domínio** nasce pendente. O **Usuário Central** consulta os domínios em uma listagem própria, pode testar para onde cada um aponta e o marca como verificado; o sistema registra quem verificou e quando. |
 | RF04 | O **Usuário Central** cadastra **Planos** com nome, descrição, situação (ativo ou inativo), preço para cada **Ciclo** oferecido e as **Funcionalidades** incluídas. O catálogo de funcionalidades é declarado em configuração e sincronizado por comando. |
 | RF05 | O **Usuário Central** altera o **Plano** de um **Tenant**, na edição do tenant. A troca fica registrada. |
-| RF06 | O **Usuário Central** altera manualmente a situação de um **Tenant**, informando motivo e, opcionalmente, uma data até a qual a cobrança automática não altera essa situação. |
-| RF07 | O sistema mantém histórico de toda mudança de situação do **Tenant**, com origem (gateway ou manual), autor e motivo. |
+| RF06 | O **Usuário Central** altera manualmente a **Situação** de um **Tenant**, informando motivo e, opcionalmente, uma data até a qual a cobrança automática não altera essa situação. |
+| RF07 | O sistema mantém histórico de toda mudança de **Situação** do **Tenant**, com origem (cobrança automática ou manual), autor, motivo e trava, consultável na edição do tenant. |
 | RF21 | O **Usuário Central** exclui um **Tenant** (exclusão lógica) e pode restaurá-lo. Tenants excluídos são consultados por um filtro na listagem. |
 | RF22 | Usuários centrais com papel de consulta listam planos e tenants, mas não cadastram, alteram, excluem nem restauram. |
 
@@ -51,5 +51,5 @@
 | ID | Requisito |
 |---|---|
 | RF18 | O sistema recebe eventos de cobrança do Asaas e do Stripe e atualiza a situação do **Tenant** conforme o evento. |
-| RF19 | Com o **Tenant** suspenso, todos os painéis dele permitem login e consulta, e negam criação, edição e exclusão. |
+| RF19 | Com o **Tenant** suspenso, todos os painéis dele ficam bloqueados: qualquer acesso, inclusive de quem já estava usando, recebe uma página informando a suspensão e pedindo contato com o administrador. Processamento em segundo plano de módulos não executa. |
 | RF20 | A troca de **Plano**, e a alteração das funcionalidades de um plano, valem imediatamente: o que saiu do plano fica inativo na mesma hora, e o que voltou reaparece com a escolha que o admin tinha feito. |

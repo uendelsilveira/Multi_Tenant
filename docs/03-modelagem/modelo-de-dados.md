@@ -101,11 +101,13 @@ erDiagram
     TENANT_STATUS_LOGS {
         id id
         string tenant_id
-        string from
-        string to
+        string from_status
+        string to_status
         string source
         id central_user_id
         string reason
+        datetime locked_until
+        datetime created_at
     }
 ```
 
@@ -113,7 +115,7 @@ Restrições:
 
 - `tenants.id` é o slug (RN20). `tenants.document` é único. `tenants.deleted_at` marca a exclusão lógica (RN24).
 - `plan_prices` tem unicidade em `(plan_id, billing_cycle)`. `billing_cycle` ∈ `monthly | semiannual | annual`, em `plan_prices` e em `tenants`.
-- `tenants.status_locked_until` ainda não existe no banco: entra com a fatia de situação.
+- `tenant_status_logs` só recebe inserções. Excluir o registro de um tenant com histórico é barrado pelo banco.
 - `tenants.provisioning_status` ∈ `pending | provisioning | ready | failed`. É independente de `tenants.status`: um diz se o ambiente existe, o outro se o tenant pode operar.
 - `domains.domain` é único.
 - `domains.panel` ∈ `admin | user | customer`. `domains.status` ∈ `pending | active`.
@@ -182,7 +184,7 @@ stateDiagram-v2
     active --> suspended : pagamento falhou / cancelamento / ação manual
     suspended --> active : pagamento confirmado / ação manual
     note right of suspended
-        Somente leitura (RN16).
+        Bloqueio total (RN16).
         Com trava manual vigente,
         eventos de cobrança não
         mudam o estado (RN17).

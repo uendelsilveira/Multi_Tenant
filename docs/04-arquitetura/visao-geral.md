@@ -109,7 +109,7 @@ Mapa de eventos (conferir nomes na documentação vigente de cada gateway antes 
 | RNF03 Provisionamento | Job assíncrono em fila dedicada; migrations de tenant em diretório próprio |
 | RNF04 Webhook | Endpoint só valida, grava, emite evento e responde; o Listener enfileira o job de processamento |
 | RNF05 Propagação | Não há cache nas funcionalidades: o plano do tenant é relido do banco central a cada requisição ou job, e reaproveitado só dentro dela. A troca de plano e a edição de um plano valem na requisição seguinte |
-| RNF06 Auditoria | `SubscriptionService` é o único ponto que muda `tenants.status` e sempre grava `tenant_status_logs` |
+| RNF06 Auditoria | `TenantStatusService` é o único ponto que muda `tenants.status`, e o repositório grava a situação e o histórico na mesma transação |
 | RNF07 Qualidade | Pipeline de CI com cobertura, PHPStan nível 8 e Pint |
 | RNF08 Reuso | Funcionalidades declaradas em catálogo; módulos de negócio se registram na base sem alterá-la |
 | RNF09 Senha provisória | Gerada no job, gravada apenas como hash, enviada uma vez; `must_change_password` bloqueia tudo até a troca |
