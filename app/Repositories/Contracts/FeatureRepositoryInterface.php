@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repositories\Contracts;
 
+use App\Models\Feature;
+
 interface FeatureRepositoryInterface
 {
     /**
@@ -15,4 +17,11 @@ interface FeatureRepositoryInterface
 
     /** @return array<int, string> */
     public function options(): array;
+
+    /**
+     * Funcionalidades incluídas em um plano, lidas do banco central.
+     *
+     * @return list<Feature>
+     */
+    public function forPlan(int $planId): array;
 }

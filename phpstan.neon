@@ -7,3 +7,9 @@ parameters:
         - app/
 
     level: 8
+
+    ignoreErrors:
+        # Trait oferecido aos modulos (RF15). Ainda nao ha modulo que o use; os testes o exercitam.
+        -
+            identifier: trait.unused
+            path: app/Filament/Tenant/Concerns/RequiresFeature.php

@@ -63,6 +63,11 @@ final class TenantService
         return $this->tenants->update($tenant, $dto);
     }
 
+    public function planIdOf(string $tenantId): ?int
+    {
+        return $this->tenants->find($tenantId)?->plan_id;
+    }
+
     /** Exclusão lógica: o banco do tenant é mantido e o slug continua reservado. */
     public function softDelete(string $tenantId): Tenant
     {

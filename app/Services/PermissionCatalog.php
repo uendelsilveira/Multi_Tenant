@@ -15,6 +15,8 @@ final class PermissionCatalog
 
     public const ROLES_MANAGE = 'roles.manage';
 
+    public const FEATURES_MANAGE = 'features.manage';
+
     /** @param array<int|string, mixed> $catalog */
     public function __construct(
         private readonly array $catalog,

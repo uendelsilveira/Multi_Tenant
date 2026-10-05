@@ -31,4 +31,14 @@ final class FeatureRepository implements FeatureRepositoryInterface
 
         return $options;
     }
+
+    public function forPlan(int $planId): array
+    {
+        return array_values(Feature::query()
+            ->whereHas('plans', fn ($query) => $query->whereKey($planId))
+            ->orderBy('module')
+            ->orderBy('name')
+            ->get()
+            ->all());
+    }
 }

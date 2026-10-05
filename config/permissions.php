@@ -13,7 +13,7 @@ return [
     | permissões deste catálogo, não cria novas. Cada permissão declara a quais
     | tipos base se aplica: admin, user, customer.
     |
-    | As duas primeiras são da própria plataforma. Cada módulo construído sobre
+    | As três primeiras são da própria plataforma. Cada módulo construído sobre
     | ela acrescenta as suas aqui.
     |
     */
@@ -28,6 +28,12 @@ return [
         [
             'key' => 'roles.manage',
             'name' => 'Gerenciar perfis',
+            'group' => 'Plataforma',
+            'base_types' => ['admin'],
+        ],
+        [
+            'key' => 'features.manage',
+            'name' => 'Gerenciar funcionalidades',
             'group' => 'Plataforma',
             'base_types' => ['admin'],
         ],
