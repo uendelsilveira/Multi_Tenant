@@ -17,6 +17,10 @@ final class PermissionCatalog
 
     public const FEATURES_MANAGE = 'features.manage';
 
+    public const CUSTOMERS_MANAGE_ALL = 'customers.manage_all';
+
+    public const CUSTOMERS_MANAGE_OWN = 'customers.manage_own';
+
     /** @param array<int|string, mixed> $catalog */
     public function __construct(
         private readonly array $catalog,

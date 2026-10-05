@@ -47,7 +47,7 @@ final class TenantUserService
 
     public function update(UpdateTenantUserDTO $dto): TenantUser
     {
-        $user = $this->findOrFail($dto->userId);
+        $user = $this->findStaffOrFail($dto->userId);
 
         if ($this->users->emailExists($dto->email, $user->id)) {
             throw TenantUserRuleException::emailTaken($dto->email);
@@ -71,7 +71,7 @@ final class TenantUserService
             throw TenantUserRuleException::cannotDeactivateSelf();
         }
 
-        $user = $this->findOrFail($userId);
+        $user = $this->findStaffOrFail($userId);
 
         if ($this->access->allows($user, PermissionCatalog::PEOPLE_MANAGE)) {
             $this->access->assertPeopleManagerRemains(exceptUserId: $user->id);
@@ -84,7 +84,7 @@ final class TenantUserService
 
     public function activate(int $userId): TenantUser
     {
-        $user = $this->findOrFail($userId);
+        $user = $this->findStaffOrFail($userId);
 
         $this->users->setActive($user, true);
 
@@ -147,6 +147,18 @@ final class TenantUserService
     private function findOrFail(int $userId): TenantUser
     {
         return $this->users->find($userId) ?? throw TenantUserNotFoundException::withId($userId);
+    }
+
+    /** Admin ou usuário. Cliente tem cadastro e regras próprias, e para a gestão de pessoas não existe. */
+    private function findStaffOrFail(int $userId): TenantUser
+    {
+        $user = $this->findOrFail($userId);
+
+        if ($user->type === TenantUserType::Customer) {
+            throw TenantUserNotFoundException::withId($userId);
+        }
+
+        return $user;
     }
 
     /** Nesta tela só se atribuem perfis de tipo admin ou usuário; clientes têm cadastro próprio (RN14). */

@@ -13,7 +13,7 @@ return [
     | permissões deste catálogo, não cria novas. Cada permissão declara a quais
     | tipos base se aplica: admin, user, customer.
     |
-    | As três primeiras são da própria plataforma. Cada módulo construído sobre
+    | Estas são as da própria plataforma. Cada módulo construído sobre
     | ela acrescenta as suas aqui.
     |
     */
@@ -36,6 +36,18 @@ return [
             'name' => 'Gerenciar funcionalidades',
             'group' => 'Plataforma',
             'base_types' => ['admin'],
+        ],
+        [
+            'key' => 'customers.manage_all',
+            'name' => 'Gerenciar todos os clientes',
+            'group' => 'Plataforma',
+            'base_types' => ['admin'],
+        ],
+        [
+            'key' => 'customers.manage_own',
+            'name' => 'Gerenciar os próprios clientes',
+            'group' => 'Plataforma',
+            'base_types' => ['user'],
         ],
     ],
 

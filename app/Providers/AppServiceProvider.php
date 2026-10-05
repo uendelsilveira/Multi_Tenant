@@ -20,6 +20,7 @@ use App\Models\Domain;
 use App\Models\Tenant;
 use App\Observers\DomainObserver;
 use App\Observers\TenantObserver;
+use App\Repositories\Contracts\CustomerRepositoryInterface;
 use App\Repositories\Contracts\DomainRepositoryInterface;
 use App\Repositories\Contracts\FeatureRepositoryInterface;
 use App\Repositories\Contracts\FeatureSettingRepositoryInterface;
@@ -27,6 +28,7 @@ use App\Repositories\Contracts\PlanRepositoryInterface;
 use App\Repositories\Contracts\RoleRepositoryInterface;
 use App\Repositories\Contracts\TenantRepositoryInterface;
 use App\Repositories\Contracts\TenantUserRepositoryInterface;
+use App\Repositories\Eloquent\CustomerRepository;
 use App\Repositories\Eloquent\DomainRepository;
 use App\Repositories\Eloquent\FeatureRepository;
 use App\Repositories\Eloquent\FeatureSettingRepository;
@@ -49,6 +51,7 @@ final class AppServiceProvider extends ServiceProvider
 {
     /** @var array<class-string, class-string> */
     public array $bindings = [
+        CustomerRepositoryInterface::class => CustomerRepository::class,
         DomainRepositoryInterface::class => DomainRepository::class,
         FeatureRepositoryInterface::class => FeatureRepository::class,
         FeatureSettingRepositoryInterface::class => FeatureSettingRepository::class,
