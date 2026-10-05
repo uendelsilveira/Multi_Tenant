@@ -14,6 +14,7 @@ namespace App\Models;
 use App\Enums\UserRole;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -48,6 +49,20 @@ final class TenantUser extends Authenticatable implements FilamentUser
         'password',
         'remember_token',
     ];
+
+    /**
+     * Papel desconhecido no banco vira null em vez de derrubar a tela: quem não
+     * tem papel reconhecido fica sem nenhuma permissão de gestão.
+     *
+     * @return Attribute<UserRole|null, UserRole|string|null>
+     */
+    protected function role(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value): ?UserRole => $value === null ? null : UserRole::tryFrom($value),
+            set: fn (UserRole|string|null $value): ?string => $value instanceof UserRole ? $value->value : $value,
+        );
+    }
 
     public function canAccessPanel(Panel $panel): bool
     {
@@ -86,7 +101,6 @@ final class TenantUser extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'role' => UserRole::class,
             'must_change_password' => 'boolean',
             'password_expires_at' => 'datetime',
         ];
